@@ -1,26 +1,32 @@
 using UnityEngine;
+using DG.Tweening;
 
 [RequireComponent(typeof(Rigidbody2D))]
 public class PlayerController : MonoBehaviour
 {
+    [Header("Player's Attributes")]
     [SerializeField] private float moveSpeed;
-    [SerializeField] private float restitution;
+    [Tooltip("The time it takes for player to rotate its Y-axis")] [SerializeField] private float turnSpeed;
     [SerializeField] private Vector2 jmpForce;
-    public float maxHitDist;
-
-    public playerState curPlayerState;
-
+    [SerializeField] private float attackRange;
+    public Transform attackPoint;
+    public LayerMask attackableLayers;
     private Rigidbody2D playerRb;
-    private CapsuleCollider2D playerCollider;
-    private bool isGrounded;
-
-    private RaycastHit2D hit;
     
 
 
-    private KeyCode leftKey = KeyCode.A;
-    private KeyCode rightKey = KeyCode.D;
-    private KeyCode jmpKey = KeyCode.Space;
+    [Header("Player's Current Info")]
+    public playerState curPlayerState;
+    public bool isGrounded;
+    public bool isFacingRight;
+
+
+
+    [Header("Player's KeyBinds")]
+    [SerializeField] private KeyCode leftKey = KeyCode.LeftArrow;
+    [SerializeField] private KeyCode rightKey = KeyCode.RightArrow;
+    [SerializeField] private KeyCode jmpKey = KeyCode.Z;
+    [SerializeField] private KeyCode atkKey = KeyCode.X;
 
     public enum playerState
     {
@@ -37,8 +43,8 @@ public class PlayerController : MonoBehaviour
     private void Start()
     {
         playerRb = GetComponent<Rigidbody2D>();
-        playerCollider = GetComponent<CapsuleCollider2D>();
         curPlayerState = playerState.IDLE;
+        isFacingRight = true;
     }
 
     private void Update()
@@ -46,7 +52,12 @@ public class PlayerController : MonoBehaviour
 
         // Move
         move();
-        
+
+        // Attack (animation determines how often we can detect the input of attack?)
+        if (Input.GetKeyDown(atkKey))
+        {
+            attack();
+        }
     }
 
     // Update Player State
@@ -128,14 +139,19 @@ public class PlayerController : MonoBehaviour
     // Basic Movement
     void move()
     {
-        // Horizontal movement
+        // Move Left
         if (Input.GetKeyDown(leftKey) || Input.GetKey(leftKey))
         {
             transform.position = new Vector3(transform.position.x - moveSpeed * Time.deltaTime, transform.position.y, transform.position.z);
+            // Turn if currently facing right
+            if (isFacingRight) turn();
         }
+        // Move Right
         else if (Input.GetKeyDown(rightKey) || Input.GetKey(rightKey))
         {
             transform.position = new Vector3(transform.position.x + moveSpeed * Time.deltaTime, transform.position.y, transform.position.z);
+            // Turn if currently facing left
+            if (!isFacingRight) turn();
         }
 
         // Check for Grounded
@@ -148,6 +164,25 @@ public class PlayerController : MonoBehaviour
             }
         }
     }
+
+    // Rotate the player's Y
+    void turn()
+    {
+        Vector3 turn;
+        if (isFacingRight)
+        {
+            turn = new Vector3(transform.rotation.x, 180f, transform.rotation.z);
+        }
+        else
+        {
+            turn = new Vector3(transform.rotation.x, 0f, transform.rotation.z);   
+        }
+        // Rotate
+        transform.DORotate(turn, turnSpeed);
+        isFacingRight = !isFacingRight;
+    }
+
+    #region Ground Check
     private void OnCollisionEnter2D(Collision2D collision)
     {
         if (collision.gameObject.layer == 3)
@@ -164,6 +199,36 @@ public class PlayerController : MonoBehaviour
             isGrounded = false;
         }
     }
-    
-    
+    #endregion
+
+
+    void attack()
+    {
+        // detect targets hit
+        Collider2D[] targetsHit =  Physics2D.OverlapCircleAll(attackPoint.position, attackRange, attackableLayers);
+
+        foreach(Collider2D target in targetsHit)
+        {
+            if (target.gameObject.layer == 3)
+            {
+                Debug.Log("we hit a platform");
+            }
+            else if(target.gameObject.layer == 7)
+            {
+                Debug.Log("we hit an enemy");
+            }
+        }
+    }
+
+    private void OnDrawGizmosSelected()
+    {
+
+        if (!attackPoint)
+        {
+            return;
+        }
+        Gizmos.DrawWireSphere(attackPoint.position, attackRange);
+    }
+
+
 }

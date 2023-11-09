@@ -1,18 +1,32 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class CameraController : MonoBehaviour
 {
-    // Start is called before the first frame update
-    void Start()
+    [SerializeField] private KeyCode panUp = KeyCode.UpArrow;
+    [SerializeField] private KeyCode panDown = KeyCode.DownArrow;
+    [SerializeField] private Vector3 cameraOffset;
+    [SerializeField] private float cameraSpeed;
+
+    private Vector3 newPos;
+    public Transform player;
+    private void Start()
     {
         
     }
-
-    // Update is called once per frame
-    void Update()
+    private void Update()
     {
         
+    }
+    private void FixedUpdate()
+    {
+        if (player)
+        {
+            followPlayer();
+        }
+    }
+    void followPlayer()
+    {
+        newPos = player.position + cameraOffset;
+        transform.position = Vector3.Lerp(transform.position, newPos, cameraSpeed * Time.deltaTime);
     }
 }
