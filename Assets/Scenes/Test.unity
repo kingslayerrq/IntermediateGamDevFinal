@@ -842,8 +842,11 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   moveSpeed: 3
-  turnSpeed: 0.15
-  jmpForce: {x: 0, y: 8}
+  turnSpeed: 0.1
+  maxJmpTime: 0.35
+  curJmpTime: 0
+  jmpForce: {x: 0, y: 0.45}
+  initJmpForce: {x: 0, y: 10}
   attackRange: 0.6
   attackPoint: {fileID: 752003782}
   attackableLayers:
@@ -855,6 +858,7 @@ MonoBehaviour:
   checkGroundBuffer: 0.01
   curPlayerState: 0
   isGrounded: 0
+  isJumping: 0
   isFacingRight: 0
   leftKey: 276
   rightKey: 275
@@ -875,7 +879,7 @@ Rigidbody2D:
   m_Mass: 2
   m_LinearDrag: 0
   m_AngularDrag: 0.05
-  m_GravityScale: 1
+  m_GravityScale: 5
   m_Material: {fileID: 0}
   m_IncludeLayers:
     serializedVersion: 2
