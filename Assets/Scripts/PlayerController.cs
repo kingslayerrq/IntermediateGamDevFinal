@@ -6,9 +6,15 @@ public class PlayerController : MonoBehaviour
     [SerializeField] private float moveSpeed;
     [SerializeField] private float restitution;
     [SerializeField] private Vector2 jmpForce;
-    public float maxHitDist;
-
-    public playerState curPlayerState;
+    [SerializeField] private float attackRange;
+    public Transform attackPoint;
+    public LayerMask attackableLayers;
+    public LayerMask groundLayers;
+    private Rigidbody2D playerRb;
+    private CapsuleCollider2D playerCollider;
+    private float groundCheckDist;
+    [Tooltip("Buffer distance for raycasting towards the ground")][SerializeField] private float groundCheckBuffer;
+    
 
     private Rigidbody2D playerRb;
     private CapsuleCollider2D playerCollider;
@@ -44,9 +50,15 @@ public class PlayerController : MonoBehaviour
     private void Update()
     {
 
+        checkGrounded();
         // Move
         move();
-        
+
+        // Attack (animation determines how often we can detect the input of attack?)
+        if (Input.GetKeyDown(atkKey))
+        {
+            attack();
+        }
     }
 
     // Update Player State
@@ -148,22 +160,70 @@ public class PlayerController : MonoBehaviour
             }
         }
     }
-    private void OnCollisionEnter2D(Collision2D collision)
+
+    // Rotate the player's Y
+    void turn()
     {
-        if (collision.gameObject.layer == 3)
+        Vector3 turn;
+        if (isFacingRight)
         {
-            Debug.Log("ground");
+            turn = new Vector3(transform.rotation.x, 180f, transform.rotation.z);
+        }
+        else
+        {
+            turn = new Vector3(transform.rotation.x, 0f, transform.rotation.z);   
+        }
+        // Rotate
+        transform.DORotate(turn, turnSpeed);
+        isFacingRight = !isFacingRight;
+    }
+
+    #region Ground Check
+
+    void checkGrounded()
+    {
+        groundCheckDist = playerCollider.size.y * 0.5f + groundCheckBuffer;
+        //Debug.DrawRay(transform.position, Vector3.down * groundCheckDist, Color.yellow);
+        RaycastHit2D hit = Physics2D.Raycast(transform.position, -Vector2.up, groundCheckDist, groundLayers);
+        if (hit)
+        {
             isGrounded = true;
         }
-    }
-    private void OnCollisionExit2D(Collision2D collision)
-    {
-        if (collision.gameObject.layer == 3)
+        else
         {
-            Debug.Log("air");
             isGrounded = false;
         }
     }
-    
-    
+    #endregion
+
+
+    void attack()
+    {
+        // detect targets hit
+        Collider2D[] targetsHit =  Physics2D.OverlapCircleAll(attackPoint.position, attackRange, attackableLayers);
+
+        foreach(Collider2D target in targetsHit)
+        {
+            if (target.gameObject.layer == 3)
+            {
+                Debug.Log("we hit a platform");
+            }
+            else if(target.gameObject.layer == 7)
+            {
+                Debug.Log("we hit an enemy");
+            }
+        }
+    }
+
+    private void OnDrawGizmosSelected()
+    {
+
+        if (!attackPoint)
+        {
+            return;
+        }
+        Gizmos.DrawWireSphere(attackPoint.position, attackRange);
+    }
+
+
 }
