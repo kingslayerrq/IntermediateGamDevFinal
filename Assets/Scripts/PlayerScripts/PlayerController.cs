@@ -11,9 +11,11 @@ public class PlayerController : MonoBehaviour
     [SerializeField] private float attackRange;
     public Transform attackPoint;
     public LayerMask attackableLayers;
+    public LayerMask groundLayers;
     private Rigidbody2D playerRb;
-    
-
+    private CapsuleCollider2D playerCollider;
+    private float checkGroundDist;
+    [Tooltip("Buffer distance for Ground Check")] [SerializeField] private float checkGroundBuffer;
 
     [Header("Player's Current Info")]
     public playerState curPlayerState;
@@ -43,13 +45,14 @@ public class PlayerController : MonoBehaviour
     private void Start()
     {
         playerRb = GetComponent<Rigidbody2D>();
+        playerCollider = GetComponent<CapsuleCollider2D>();
         curPlayerState = playerState.IDLE;
         isFacingRight = true;
     }
 
     private void Update()
     {
-
+        checkGrounded();
         // Move
         move();
 
@@ -183,19 +186,16 @@ public class PlayerController : MonoBehaviour
     }
 
     #region Ground Check
-    private void OnCollisionEnter2D(Collision2D collision)
+    void checkGrounded()
     {
-        if (collision.gameObject.layer == 3)
+        checkGroundDist = playerCollider.size.y * 0.5f + checkGroundBuffer;
+        RaycastHit2D hit = Physics2D.Raycast(transform.position, -Vector2.up, checkGroundDist, groundLayers);
+        if (hit)
         {
-            Debug.Log("ground");
             isGrounded = true;
         }
-    }
-    private void OnCollisionExit2D(Collision2D collision)
-    {
-        if (collision.gameObject.layer == 3)
+        else
         {
-            Debug.Log("air");
             isGrounded = false;
         }
     }

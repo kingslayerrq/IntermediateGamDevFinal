@@ -842,14 +842,24 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   moveSpeed: 3
-  restitution: 0
+  turnSpeed: 0.15
   jmpForce: {x: 0, y: 8}
   attackRange: 0.6
   attackPoint: {fileID: 752003782}
   attackableLayers:
     serializedVersion: 2
     m_Bits: 72
+  groundLayers:
+    serializedVersion: 2
+    m_Bits: 8
+  checkGroundBuffer: 0.01
   curPlayerState: 0
+  isGrounded: 0
+  isFacingRight: 0
+  leftKey: 276
+  rightKey: 275
+  jmpKey: 122
+  atkKey: 120
 --- !u!50 &984455470
 Rigidbody2D:
   serializedVersion: 4
