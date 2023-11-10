@@ -8,10 +8,12 @@ public class PlayerController : MonoBehaviour
     [SerializeField] private float moveSpeed;
     [Tooltip("The time it takes for player to rotate its Y-axis")] [SerializeField] private float turnSpeed;
     [SerializeField] private float maxJmpTime;
-    [Tooltip("Use to calculate time holding down JumpKey")] [SerializeField] private float curJmpTime;
+    private float curJmpTime;
     [SerializeField] private Vector2 jmpForce;
     [SerializeField] private Vector2 initJmpForce;
     [SerializeField] private float attackRange;
+    [SerializeField] private float dashDistance;
+    [Tooltip("Time it takes to perform a dash")][SerializeField] private float dashDuration;
     public Transform attackPoint;
     public LayerMask attackableLayers;
     public LayerMask groundLayers;
@@ -19,6 +21,7 @@ public class PlayerController : MonoBehaviour
     private CapsuleCollider2D playerCollider;
     private float checkGroundDist;
     [Tooltip("Buffer distance for Ground Check")] [SerializeField] private float checkGroundBuffer;
+
 
     [Header("Player's Current Info")]
     public playerState curPlayerState;
@@ -33,6 +36,7 @@ public class PlayerController : MonoBehaviour
     [SerializeField] private KeyCode rightKey = KeyCode.RightArrow;
     [SerializeField] private KeyCode jmpKey = KeyCode.Z;
     [SerializeField] private KeyCode atkKey = KeyCode.X;
+    [SerializeField] private KeyCode dashKey = KeyCode.C;
 
     public enum playerState
     {
@@ -65,6 +69,13 @@ public class PlayerController : MonoBehaviour
         {
             attack();
         }
+
+        if (Input.GetKeyDown(dashKey))
+        {
+            dash();
+        }
+
+        
     }
 
     // Update Player State
@@ -188,7 +199,7 @@ public class PlayerController : MonoBehaviour
 
         if (Input.GetKeyUp(jmpKey))
         {
-            curJmpTime = 0;
+            //curJmpTime = 0;
             isJumping = false;
         }
         #endregion
@@ -252,6 +263,27 @@ public class PlayerController : MonoBehaviour
         }
     }
 
+    #region Dash
+    void dash()
+    {
+        // end point of the dash
+        float endX;
+        // Dash towards facing direction
+        if (isFacingRight)
+        {
+            endX= transform.position.x + dashDistance;
+        }
+        else
+        {
+            endX = transform.position.x - dashDistance;
+        }
+
+        transform.DOMoveX(endX, dashDuration);
+    }
+    #endregion
+
+
+    #region Debug
     private void OnDrawGizmosSelected()
     {
 
@@ -261,6 +293,6 @@ public class PlayerController : MonoBehaviour
         }
         Gizmos.DrawWireSphere(attackPoint.position, attackRange);
     }
-
+    #endregion
 
 }
