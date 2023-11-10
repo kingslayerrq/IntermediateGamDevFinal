@@ -7,7 +7,10 @@ public class PlayerController : MonoBehaviour
     [Header("Player's Attributes")]
     [SerializeField] private float moveSpeed;
     [Tooltip("The time it takes for player to rotate its Y-axis")] [SerializeField] private float turnSpeed;
+    [SerializeField] private float maxJmpTime;
+    [Tooltip("Use to calculate time holding down JumpKey")] [SerializeField] private float curJmpTime;
     [SerializeField] private Vector2 jmpForce;
+    [SerializeField] private Vector2 initJmpForce;
     [SerializeField] private float attackRange;
     public Transform attackPoint;
     public LayerMask attackableLayers;
@@ -20,6 +23,7 @@ public class PlayerController : MonoBehaviour
     [Header("Player's Current Info")]
     public playerState curPlayerState;
     public bool isGrounded;
+    public bool isJumping;
     public bool isFacingRight;
 
 
@@ -157,15 +161,42 @@ public class PlayerController : MonoBehaviour
             if (!isFacingRight) turn();
         }
 
-        // Check for Grounded
+        #region Jump
         if (isGrounded)
         {
-            // Jump
+            // First frame when jumping off ground
             if (Input.GetKeyDown(jmpKey))
             {
-                playerRb.AddForce(jmpForce, ForceMode2D.Impulse);
+                curJmpTime = 0;
+                isJumping = true;
+                jump(initJmpForce);
+            }
+            
+        }
+        if (Input.GetKey(jmpKey) && isJumping)
+        {
+            if (curJmpTime <= maxJmpTime)
+            {
+                jump(jmpForce);
+                curJmpTime += Time.deltaTime;
+            }
+            else
+            {
+                isJumping = false;
             }
         }
+
+        if (Input.GetKeyUp(jmpKey))
+        {
+            curJmpTime = 0;
+            isJumping = false;
+        }
+        #endregion
+    }
+
+    void jump(Vector2 force)
+    {
+        playerRb.AddForce(force, ForceMode2D.Impulse);
     }
 
     // Rotate the player's Y
@@ -204,6 +235,7 @@ public class PlayerController : MonoBehaviour
 
     void attack()
     {
+        Debug.Log("attacking");
         // detect targets hit
         Collider2D[] targetsHit =  Physics2D.OverlapCircleAll(attackPoint.position, attackRange, attackableLayers);
 
