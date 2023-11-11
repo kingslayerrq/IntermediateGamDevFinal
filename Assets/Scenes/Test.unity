@@ -844,8 +844,8 @@ MonoBehaviour:
   moveSpeed: 3
   turnSpeed: 0.1
   maxJmpTime: 0.35
-  jmpForce: {x: 0, y: 0.85}
-  initJmpForce: {x: 0, y: 20}
+  jmpForce: {x: 0, y: 0.25}
+  initJmpForce: {x: 0, y: 0.85}
   attackRange: 0.6
   dashDistance: 3
   dashDuration: 0.5
