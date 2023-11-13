@@ -14,6 +14,8 @@ public class PlayerController : MonoBehaviour
     [SerializeField] private float attackRange;
     [SerializeField] private float dashDistance;
     [Tooltip("Time it takes to perform a dash")][SerializeField] private float dashDuration;
+    [SerializeField] private float playerKnockbackDistance;
+    [SerializeField] private float playerKnockbackDuration;
     public Transform attackPoint;
     public LayerMask attackableLayers;
     public LayerMask groundLayers;
@@ -249,6 +251,18 @@ public class PlayerController : MonoBehaviour
         Debug.Log("attacking");
         // detect targets hit
         Collider2D[] targetsHit =  Physics2D.OverlapCircleAll(attackPoint.position, attackRange, attackableLayers);
+
+        //player knockback
+        float endX;
+        if (isFacingRight)
+        {
+            endX= transform.position.x - playerKnockbackDistance;
+        }
+        else
+        {
+            endX = transform.position.x + playerKnockbackDistance;
+        }
+        transform.DOMoveX(endX, playerKnockbackDuration);
 
         foreach(Collider2D target in targetsHit)
         {

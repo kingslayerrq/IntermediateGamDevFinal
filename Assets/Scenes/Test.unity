@@ -2149,6 +2149,8 @@ MonoBehaviour:
   attackRange: 0.6
   dashDistance: 5
   dashDuration: 0.4
+  playerKnockbackDistance: 0.2
+  playerKnockbackDuration: 0.2
   attackPoint: {fileID: 752003782}
   attackableLayers:
     serializedVersion: 2
