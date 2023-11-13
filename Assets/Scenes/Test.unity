@@ -2147,8 +2147,8 @@ MonoBehaviour:
   jmpForce: {x: 0, y: 0.075}
   initJmpForce: {x: 0, y: 18}
   attackRange: 0.6
-  dashDistance: 3
-  dashDuration: 0.5
+  dashDistance: 5
+  dashDuration: 0.4
   attackPoint: {fileID: 752003782}
   attackableLayers:
     serializedVersion: 2
