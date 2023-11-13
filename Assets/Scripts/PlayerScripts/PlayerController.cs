@@ -1,5 +1,6 @@
 using UnityEngine;
 using DG.Tweening;
+using UnityEditor;
 
 [RequireComponent(typeof(Rigidbody2D))]
 public class PlayerController : MonoBehaviour
@@ -180,6 +181,8 @@ public class PlayerController : MonoBehaviour
             // First frame when jumping off ground
             if (Input.GetKeyDown(jmpKey))
             {
+                //seeing if it really does just call once:
+                print("jumped");
                 curJmpTime = 0;
                 isJumping = true;
                 jump(initJmpForce);
@@ -203,13 +206,18 @@ public class PlayerController : MonoBehaviour
         {
             //curJmpTime = 0;
             isJumping = false;
+            //when the player stops jumping, in hollow knight, their velocity goes directly to zero to give the player more control. If we were to continue using an impulse, we'd have to counteract it here with a downward one, no?
         }
         #endregion
     }
 
+    /*
+     * For some reaosn, the jump here accelerates the player as they rise, when in reality they should be immedielty hitting their top speed. Is jump called multiple times?
+     */
     void jump(Vector2 force)
     {
-        playerRb.AddForce(force, ForceMode2D.Impulse);
+        playerRb.AddForce(force, ForceMode2D.Impulse); 
+        //I think this impulse force is adding come inconsistancies with the jump and we should think about making the jump give the player a controlled velocity over just an impulse push, as much as it makes sense logically
     }
 
     // Rotate the player's Y
@@ -251,19 +259,24 @@ public class PlayerController : MonoBehaviour
         Debug.Log("attacking");
         // detect targets hit
         Collider2D[] targetsHit =  Physics2D.OverlapCircleAll(attackPoint.position, attackRange, attackableLayers);
+        //TODO: render slash
 
-        //player knockback
-        float endX;
-        if (isFacingRight)
-        {
-            endX= transform.position.x - playerKnockbackDistance;
-        }
-        else
-        {
-            endX = transform.position.x + playerKnockbackDistance;
-        }
-        transform.DOMoveX(endX, playerKnockbackDuration);
 
+
+        //player knockback should only occur when the nail hits something
+        if (targetsHit.Length > 0)
+        {
+            float endX;
+            if (isFacingRight)
+            {
+                endX = transform.position.x - playerKnockbackDistance;
+            }
+            else
+            {
+                endX = transform.position.x + playerKnockbackDistance;
+            }
+            transform.DOMoveX(endX, playerKnockbackDuration);
+        }
         foreach(Collider2D target in targetsHit)
         {
             if (target.gameObject.layer == 3)
