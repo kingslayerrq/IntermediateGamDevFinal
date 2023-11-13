@@ -175,6 +175,10 @@ public class PlayerController : MonoBehaviour
             if (!isFacingRight) turn();
         }
 
+    }
+
+    private void FixedUpdate()
+    {
         #region Jump
         if (isGrounded)
         {
@@ -209,6 +213,7 @@ public class PlayerController : MonoBehaviour
             //when the player stops jumping, in hollow knight, their velocity goes directly to zero to give the player more control. If we were to continue using an impulse, we'd have to counteract it here with a downward one, no?
         }
         #endregion
+        
     }
 
     /*
