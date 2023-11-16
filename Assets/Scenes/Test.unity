@@ -2018,6 +2018,9 @@ GameObject:
   - component: {fileID: 984455470}
   - component: {fileID: 984455469}
   - component: {fileID: 984455471}
+  - component: {fileID: 984455474}
+  - component: {fileID: 984455473}
+  - component: {fileID: 984455472}
   m_Layer: 0
   m_Name: MC
   m_TagString: Untagged
@@ -2148,31 +2151,6 @@ MonoBehaviour:
   jmpForce: 20
   dashDistance: 5
   dashDuration: 0.4
-  attackRange: 0.6
-  playerKnockbackDistance: 0.2
-  playerKnockbackDuration: 0.2
-  attackPoint: {fileID: 752003782}
-  attackableLayers:
-    serializedVersion: 2
-    m_Bits: 72
-  groundLayers:
-    serializedVersion: 2
-    m_Bits: 8
-  checkGroundBuffer: 0.01
-  playerTimeSlowFactor: 0.05
-  maxSlowGauge: 5
-  curSlowGauge: 0
-  slowGaugeRecoverFactor: 0
-  curPlayerState: 0
-  isGrounded: 0
-  isJumping: 0
-  isFacingRight: 0
-  leftKey: 276
-  rightKey: 275
-  jmpKey: 122
-  atkKey: 120
-  dashKey: 99
-  timeSlowKey: 118
 --- !u!50 &984455470
 Rigidbody2D:
   serializedVersion: 4
@@ -2213,6 +2191,66 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   minSlowDownDuration: 2
+--- !u!114 &984455472
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 984455465}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4f2c4b1a11afc334d835a5c3b75fa00c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  playerTimeSlowFactor: 0.05
+  maxSlowGauge: 5
+  curSlowGauge: 0
+  slowGaugeRecoverFactor: 0
+--- !u!114 &984455473
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 984455465}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a45fe0490779e8f42914f87c4afec30c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  attackRange: 0.8
+  playerKnockbackDistance: 0.2
+  playerKnockbackDuration: 0.2
+  attackPoint: {fileID: 752003782}
+  attackableLayers:
+    serializedVersion: 2
+    m_Bits: 72
+--- !u!114 &984455474
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 984455465}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 64ea38f2907633243814a0b12c33912e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  leftKey: 276
+  rightKey: 275
+  jmpKey: 122
+  atkKey: 120
+  dashKey: 99
+  timeSlowKey: 118
+  groundLayers:
+    serializedVersion: 2
+    m_Bits: 8
+  checkGroundBuffer: 0.001
+  curPlayerState: 0
+  isGrounded: 0
+  isFacingRight: 0
 --- !u!1 &1206012752
 GameObject:
   m_ObjectHideFlags: 0
