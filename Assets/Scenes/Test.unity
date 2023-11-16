@@ -2017,6 +2017,7 @@ GameObject:
   - component: {fileID: 984455466}
   - component: {fileID: 984455470}
   - component: {fileID: 984455469}
+  - component: {fileID: 984455471}
   m_Layer: 0
   m_Name: MC
   m_TagString: Untagged
@@ -2145,9 +2146,9 @@ MonoBehaviour:
   turnSpeed: 0.1
   maxJmpTime: 0.3
   jmpForce: 20
-  attackRange: 0.6
   dashDistance: 5
   dashDuration: 0.4
+  attackRange: 0.6
   playerKnockbackDistance: 0.2
   playerKnockbackDuration: 0.2
   attackPoint: {fileID: 752003782}
@@ -2158,6 +2159,10 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 8
   checkGroundBuffer: 0.01
+  playerTimeSlowFactor: 0.05
+  maxSlowGauge: 5
+  curSlowGauge: 0
+  slowGaugeRecoverFactor: 0
   curPlayerState: 0
   isGrounded: 0
   isJumping: 0
@@ -2167,6 +2172,7 @@ MonoBehaviour:
   jmpKey: 122
   atkKey: 120
   dashKey: 99
+  timeSlowKey: 118
 --- !u!50 &984455470
 Rigidbody2D:
   serializedVersion: 4
@@ -2194,6 +2200,19 @@ Rigidbody2D:
   m_SleepingMode: 0
   m_CollisionDetection: 1
   m_Constraints: 4
+--- !u!114 &984455471
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 984455465}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 595d3a43acf85eb4381443f726ed1624, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  minSlowDownDuration: 2
 --- !u!1 &1206012752
 GameObject:
   m_ObjectHideFlags: 0
