@@ -6,24 +6,34 @@ using UnityEditor;
 public class PlayerController : MonoBehaviour
 {
     [Header("Player's Attributes")]
+    #region Movement variables
     [SerializeField] private float moveSpeed;
     [Tooltip("The time it takes for player to rotate its Y-axis")] [SerializeField] private float turnSpeed;
     [SerializeField] private float maxJmpTime;
-    private float curJmpTime;
     [SerializeField] private float jmpForce;
-    //[SerializeField] private Vector2 initJmpForce;
-    [SerializeField] private float attackRange;
     [SerializeField] private float dashDistance;
     [Tooltip("Time it takes to perform a dash")][SerializeField] private float dashDuration;
+    #endregion
+    #region Attack variables
+    [SerializeField] private float attackRange;
     [SerializeField] private float playerKnockbackDistance;
     [SerializeField] private float playerKnockbackDuration;
     public Transform attackPoint;
     public LayerMask attackableLayers;
+    #endregion
+
     public LayerMask groundLayers;
-    private Rigidbody2D playerRb;
-    private CapsuleCollider2D playerCollider;
     private float checkGroundDist;
     [Tooltip("Buffer distance for Ground Check")] [SerializeField] private float checkGroundBuffer;
+    private Rigidbody2D playerRb;
+    private CapsuleCollider2D playerCollider;
+
+    [Header("Time Slow Attributes")]
+    private TimeSlow playerTimeSlow;
+    [SerializeField] private float playerTimeSlowFactor;
+    [SerializeField] private float maxSlowGauge;
+    [SerializeField] private float curSlowGauge;
+    [SerializeField] private float slowGaugeRecoverFactor;
 
 
     [Header("Player's Current Info")]
@@ -40,6 +50,7 @@ public class PlayerController : MonoBehaviour
     [SerializeField] private KeyCode jmpKey = KeyCode.Z;
     [SerializeField] private KeyCode atkKey = KeyCode.X;
     [SerializeField] private KeyCode dashKey = KeyCode.C;
+    [SerializeField] private KeyCode timeSlowKey = KeyCode.V;
 
     public enum playerState
     {
@@ -52,27 +63,45 @@ public class PlayerController : MonoBehaviour
         DEAD
     }
 
-
-    private void Start()
+    private void Awake()
     {
         playerRb = GetComponent<Rigidbody2D>();
         playerCollider = GetComponent<CapsuleCollider2D>();
+        playerTimeSlow = GetComponent<TimeSlow>();
+    }
+    private void Start()
+    {
+        playerTimeSlow.slowDownFactor = playerTimeSlowFactor;
         curPlayerState = playerState.IDLE;
+        curSlowGauge = maxSlowGauge;
         isFacingRight = true;
     }
 
     private void Update()
     {
         checkGrounded();
+      
+        // Recover Time Slow Gauge, not exceeding max
+        if (Time.timeScale == 1f)
+        {
+            curSlowGauge += slowGaugeRecoverFactor;
+        }
+        curSlowGauge = Mathf.Clamp(curSlowGauge, 0, maxSlowGauge);
+
+        #region Movement
         // Move
         move();
+        #endregion
 
+        #region Attack
         // Attack (animation determines how often we can detect the input of attack?)
         if (Input.GetKeyDown(atkKey))
         {
             attack();
         }
+        #endregion
 
+        #region Jump
         // Jump
         if (Input.GetKeyDown(jmpKey) && isGrounded)
         {
@@ -83,89 +112,40 @@ public class PlayerController : MonoBehaviour
         {
             playerRb.velocity = new Vector2(playerRb.velocity.x, 0);
         }
+        #endregion
 
+        #region Dash
         if (Input.GetKeyDown(dashKey))
         {
             dash();
         }
+        #endregion
 
-        
-    }
-
-    // Update Player State
-    void updatePlayerState(playerState newState)
-    {
-        if (newState != curPlayerState)
+        #region TimeSlow
+        if (Input.GetKeyDown(timeSlowKey))
         {
-            // Set the curPlayerState to newState
-            curPlayerState = newState;
-            switch (newState)
+            if (curSlowGauge >= playerTimeSlow.minSlowDownDuration)
             {
-                case playerState.IDLE:
-                    handleIdle();
-                    break;
-                case playerState.RUNNING:
-                    handleRunning();
-                    break;
-                case playerState.AIRBORNE:
-                    handleAirborne();
-                    break;
-                case playerState.FOCUS:
-                    handleFocus();
-                    break;
-                case playerState.ATTACK:
-                    handleAttack();
-                    break;
-                case playerState.HURT:
-                    handleHurt();
-                    break;
-                case playerState.DEAD:
-                    handleDead();
-                    break;
-                default:
-                    break;
+                playerTimeSlow.slowDownDuration = curSlowGauge;
+                playerTimeSlow.slow();
             }
         }
-    }
 
-    
-
-    #region Player State Logic
-    void handleIdle()
-    {
-        Debug.Log("Idling");
-    }
-
-    void handleRunning()
-    {
-        Debug.Log("Running");
-    }
-
-    void handleAirborne()
-    {
-        Debug.Log("In Air!!");
-    }
-
-    void handleFocus()
-    {
+        // When we are slowing down time, decrease the gauge
+        if (Time.timeScale < 1f)
+        {
+            Debug.Log("slowed");
+            curSlowGauge -= Time.unscaledDeltaTime;
+        }
+        #endregion
 
     }
 
-    void handleAttack()
-    {
 
-    }
 
-    void handleHurt()
-    {
 
-    }
 
-    void handleDead()
-    {
-        
-    }
-    #endregion
+
 
 
     // Basic Movement
@@ -189,8 +169,6 @@ public class PlayerController : MonoBehaviour
     }
 
 
-
-  
 
     // Rotate the player's Y
     void turn()
