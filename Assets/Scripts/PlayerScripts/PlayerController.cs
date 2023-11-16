@@ -10,8 +10,8 @@ public class PlayerController : MonoBehaviour
     [Tooltip("The time it takes for player to rotate its Y-axis")] [SerializeField] private float turnSpeed;
     [SerializeField] private float maxJmpTime;
     private float curJmpTime;
-    [SerializeField] private Vector2 jmpForce;
-    [SerializeField] private Vector2 initJmpForce;
+    [SerializeField] private float jmpForce;
+    //[SerializeField] private Vector2 initJmpForce;
     [SerializeField] private float attackRange;
     [SerializeField] private float dashDistance;
     [Tooltip("Time it takes to perform a dash")][SerializeField] private float dashDuration;
@@ -71,6 +71,17 @@ public class PlayerController : MonoBehaviour
         if (Input.GetKeyDown(atkKey))
         {
             attack();
+        }
+
+        // Jump
+        if (Input.GetKeyDown(jmpKey) && isGrounded)
+        {
+            playerRb.velocity = new Vector2(playerRb.velocity.x, jmpForce);
+        }
+        // As soon as jmpkey released, set yvel => 0
+        if (Input.GetKeyUp(jmpKey) && playerRb.velocity.y > 0)
+        {
+            playerRb.velocity = new Vector2(playerRb.velocity.x, 0);
         }
 
         if (Input.GetKeyDown(dashKey))
@@ -175,50 +186,11 @@ public class PlayerController : MonoBehaviour
             if (!isFacingRight) turn();
         }
 
-        #region Jump
-        if (isGrounded)
-        {
-            // First frame when jumping off ground
-            if (Input.GetKeyDown(jmpKey))
-            {
-                //seeing if it really does just call once:
-                print("jumped");
-                curJmpTime = 0;
-                isJumping = true;
-                jump(initJmpForce);
-            }
-            
-        }
-        if (Input.GetKey(jmpKey) && isJumping)
-        {
-            if (curJmpTime <= maxJmpTime)
-            {
-                jump(jmpForce);
-                curJmpTime += Time.deltaTime;
-            }
-            else
-            {
-                isJumping = false;
-            }
-        }
-
-        if (Input.GetKeyUp(jmpKey))
-        {
-            //curJmpTime = 0;
-            isJumping = false;
-            //when the player stops jumping, in hollow knight, their velocity goes directly to zero to give the player more control. If we were to continue using an impulse, we'd have to counteract it here with a downward one, no?
-        }
-        #endregion
     }
 
-    /*
-     * For some reaosn, the jump here accelerates the player as they rise, when in reality they should be immedielty hitting their top speed. Is jump called multiple times?
-     */
-    void jump(Vector2 force)
-    {
-        playerRb.AddForce(force, ForceMode2D.Impulse); 
-        //I think this impulse force is adding come inconsistancies with the jump and we should think about making the jump give the player a controlled velocity over just an impulse push, as much as it makes sense logically
-    }
+
+
+  
 
     // Rotate the player's Y
     void turn()
@@ -241,7 +213,7 @@ public class PlayerController : MonoBehaviour
     void checkGrounded()
     {
         checkGroundDist = playerCollider.size.y * 0.5f + checkGroundBuffer;
-        RaycastHit2D hit = Physics2D.Raycast(transform.position, -Vector2.up, checkGroundDist, groundLayers);
+        RaycastHit2D hit = Physics2D.CapsuleCast(transform.position, playerCollider.size, CapsuleDirection2D.Vertical, 90f ,-Vector2.up ,checkGroundDist, groundLayers);
         if (hit)
         {
             isGrounded = true;
