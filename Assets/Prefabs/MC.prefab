@@ -44,6 +44,7 @@ GameObject:
   - component: {fileID: 8017086031121717399}
   - component: {fileID: 5721335641344100806}
   - component: {fileID: 1435686383564862178}
+  - component: {fileID: 7764833987917831169}
   m_Layer: 0
   m_Name: MC
   m_TagString: Untagged
@@ -197,30 +198,34 @@ MonoBehaviour:
   moveSpeed: 3
   turnSpeed: 0.1
   maxJmpTime: 0.3
-  jmpForce: {x: 0, y: 0.075}
-  initJmpForce: {x: 0, y: 18}
-  attackRange: 0.6
+  jmpForce: 20
   dashDistance: 5
   dashDuration: 0.4
-  playerKnockbackDistance: 0.2
-  playerKnockbackDuration: 0.2
-  attackPoint: {fileID: 8526908203867499692}
-  attackableLayers:
-    serializedVersion: 2
-    m_Bits: 72
-  groundLayers:
-    serializedVersion: 2
-    m_Bits: 8
-  checkGroundBuffer: 0.01
-  curPlayerState: 0
-  isGrounded: 0
-  isJumping: 0
-  isFacingRight: 0
+--- !u!114 &7764833987917831169
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5829749955201196464}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 64ea38f2907633243814a0b12c33912e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
   leftKey: 276
   rightKey: 275
   jmpKey: 122
   atkKey: 120
   dashKey: 99
+  timeSlowKey: 118
+  groundLayers:
+    serializedVersion: 2
+    m_Bits: 8
+  checkGroundBuffer: 0.1
+  curPlayerState: 0
+  isGrounded: 0
+  isFacingRight: 0
 --- !u!1 &7305310980592232027
 GameObject:
   m_ObjectHideFlags: 0
@@ -250,7 +255,7 @@ Transform:
   m_GameObject: {fileID: 7305310980592232027}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 1, y: 0, z: -10}
+  m_LocalPosition: {x: 0.9637352, y: -0.33282083, z: -10}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -327,11 +332,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8be626bb9e64f445ea0e745f8acae876, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  panUp: 273
-  panDown: 274
-  cameraOffset: {x: 0, y: 0, z: -10}
-  cameraSpeed: 1
-  player: {fileID: 2274406520599171681}
+  cam1: {fileID: 0}
+  cam2: {fileID: 0}
 --- !u!114 &1558088007561835025
 MonoBehaviour:
   m_ObjectHideFlags: 0
