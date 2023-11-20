@@ -56,6 +56,7 @@ public class PlayerCombat : MonoBehaviour
             }
             transform.DOMoveX(endX, playerKnockbackDuration);
         }
+
         foreach (Collider2D target in targetsHit)
         {
             if (target.gameObject.layer == 3)
