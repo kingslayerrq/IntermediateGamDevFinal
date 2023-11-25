@@ -1,8 +1,16 @@
 using UnityEngine;
 
 
-public class Player : MonoBehaviour
+public class Player : MonoBehaviour, IDamageable
 {
+    [Header("Player's Current Info")]
+    public int curHealth;
+    public int maxHealth;
+    public playerState curPlayerState;
+    public bool isGrounded;
+    public bool isFacingRight;
+
+
     [Header("Player's KeyBinds")]
     public KeyCode upKey = KeyCode.UpArrow;
     public KeyCode downKey = KeyCode.DownArrow;
@@ -21,10 +29,6 @@ public class Player : MonoBehaviour
 
 
 
-    [Header("Player's Current Info")]
-    public playerState curPlayerState;
-    public bool isGrounded;
-    public bool isFacingRight;
 
 
 
@@ -49,6 +53,12 @@ public class Player : MonoBehaviour
     private void Update()
     {
         checkGrounded();
+        
+        if (curHealth == 0)
+        {
+            Debug.Log("you died!");
+            // respawn
+        }
     }
 
     #region Ground Check
@@ -65,5 +75,13 @@ public class Player : MonoBehaviour
             isGrounded = false;
         }
     }
+
     #endregion
+
+
+    public void Damage(int damage)
+    {
+        curHealth -= damage;
+        Debug.Log("took " + damage + " damage!");
+    }
 }
