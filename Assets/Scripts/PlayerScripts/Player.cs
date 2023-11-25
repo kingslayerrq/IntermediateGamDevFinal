@@ -4,6 +4,8 @@ using UnityEngine;
 public class Player : MonoBehaviour
 {
     [Header("Player's KeyBinds")]
+    public KeyCode upKey = KeyCode.UpArrow;
+    public KeyCode downKey = KeyCode.DownArrow;
     public KeyCode leftKey = KeyCode.LeftArrow;
     public KeyCode rightKey = KeyCode.RightArrow;
     public KeyCode jmpKey = KeyCode.Z;
