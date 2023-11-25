@@ -2,11 +2,13 @@ using System;
 using UnityEngine;
 
 
-public class Player : MonoBehaviour, IDamageable
+public class Player : MonoBehaviour, IDamageable, IResourceGauge
 {
     [Header("Player's Current Info")]
     public int curHealth;
     public int maxHealth;
+    public float maxSlowGauge;
+    public float curSlowGauge;
     public playerState curPlayerState;
     public bool isGrounded;
     public bool isFacingRight;
@@ -28,8 +30,11 @@ public class Player : MonoBehaviour, IDamageable
     [Tooltip("Buffer distance for Ground Check")][SerializeField] private float checkGroundBuffer;
     private CapsuleCollider2D playerCollider;
 
+    // Events to trigger
     public event Action<int> onHit;
     public event Action<int> onRecover;
+    public event Action<float> onEnergySpent;
+    public event Action<float> onEnergyRecover;
 
 
 
@@ -52,6 +57,7 @@ public class Player : MonoBehaviour, IDamageable
     {
         isFacingRight = true;
         curHealth = maxHealth;
+        curSlowGauge = maxSlowGauge;
     }
     private void Update()
     {
@@ -81,12 +87,30 @@ public class Player : MonoBehaviour, IDamageable
 
     #endregion
 
-
+    #region IDamageable Methods
     public void Damage(int damage)
     {
         curHealth -= damage;
-        // Trigger the event!!!
         onHit?.Invoke(damage);
         Debug.Log("took " + damage + " damage!");
     }
+    #endregion
+
+    #region IResourceGauge Methods
+    public void gainResource(float gain)
+    {
+        curSlowGauge += gain;
+        // Convert gain to percentage
+        float gainPerc = gain / maxSlowGauge;
+        onEnergyRecover?.Invoke(gainPerc);
+    }
+
+    public void useResource(float amount)
+    {
+        curSlowGauge -= amount;
+        // Convert amount to percentage
+        float amountPerc = amount / maxSlowGauge;
+        onEnergySpent?.Invoke(amountPerc);
+    }
+    #endregion
 }

@@ -8,8 +8,7 @@ public class PlayerTimeSlow : MonoBehaviour
     [Header("Time Slow Attributes")]
     private TimeSlow playerTimeSlow;
     [SerializeField] private float playerTimeSlowFactor;
-    [SerializeField] private float maxSlowGauge;
-    [SerializeField] private float curSlowGauge;
+
     [SerializeField] private float slowGaugeRecoverFactor;
 
     private void Awake()
@@ -21,35 +20,38 @@ public class PlayerTimeSlow : MonoBehaviour
     {
         player = GetComponent<Player>();
         playerTimeSlow.slowDownFactor = playerTimeSlowFactor;
-        curSlowGauge = maxSlowGauge;
+        
 
     }
 
     private void Update()
     {
-        // Recover Time Slow Gauge, not exceeding max
-        if (Time.timeScale == 1f)
+        // Recover Time Slow Gauge when not slowing, not exceeding max
+        if (Time.timeScale == 1f && player.curSlowGauge < player.maxSlowGauge)
         {
-            curSlowGauge += slowGaugeRecoverFactor;
+            
+            player.gainResource(slowGaugeRecoverFactor);
         }
-        curSlowGauge = Mathf.Clamp(curSlowGauge, 0, maxSlowGauge);
+        player.curSlowGauge = Mathf.Clamp(player.curSlowGauge, 0, player.maxSlowGauge);
 
 
         #region TimeSlow
-        if (Input.GetKeyDown(player.timeSlowKey))
+        if (Input.GetKeyDown(player.timeSlowKey) && Time.timeScale == 1f)
         {
-            if (curSlowGauge >= playerTimeSlow.minSlowDownDuration)
+            if (player.curSlowGauge >= playerTimeSlow.minSlowDownDuration)
             {
-                playerTimeSlow.slowDownDuration = curSlowGauge;
+                playerTimeSlow.slowDownDuration = player.curSlowGauge;
                 playerTimeSlow.slow();
+
             }
         }
 
         // When we are slowing down time, decrease the gauge
-        if (Time.timeScale < 1f)
+        if (Time.timeScale < 1f && player.curSlowGauge > 0)
         {
             Debug.Log("slowed");
-            curSlowGauge -= Time.unscaledDeltaTime;
+            player.useResource(Time.unscaledDeltaTime);
+            
         }
         #endregion
     }
