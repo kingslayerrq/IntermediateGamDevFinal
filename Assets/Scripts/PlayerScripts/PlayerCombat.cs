@@ -5,6 +5,7 @@ using UnityEngine;
 [RequireComponent(typeof(Player))]
 public class PlayerCombat : MonoBehaviour
 {
+    private Player player;
 
     #region Attack variables
     [SerializeField] private float attackRange;
@@ -19,7 +20,6 @@ public class PlayerCombat : MonoBehaviour
     public LayerMask attackableLayers;
     #endregion
 
-    private Player player;
 
     private void Awake()
     {

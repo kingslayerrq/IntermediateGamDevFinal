@@ -4,6 +4,7 @@ using UnityEngine;
 public class PlayerTimeSlow : MonoBehaviour
 {
     private Player player;
+
     [Header("Time Slow Attributes")]
     private TimeSlow playerTimeSlow;
     [SerializeField] private float playerTimeSlowFactor;

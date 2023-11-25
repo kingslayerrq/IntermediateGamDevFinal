@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 
 
@@ -27,7 +28,8 @@ public class Player : MonoBehaviour, IDamageable
     [Tooltip("Buffer distance for Ground Check")][SerializeField] private float checkGroundBuffer;
     private CapsuleCollider2D playerCollider;
 
-
+    public event Action<int> onHit;
+    public event Action<int> onRecover;
 
 
 
@@ -49,6 +51,7 @@ public class Player : MonoBehaviour, IDamageable
     private void Start()
     {
         isFacingRight = true;
+        curHealth = maxHealth;
     }
     private void Update()
     {
@@ -82,6 +85,8 @@ public class Player : MonoBehaviour, IDamageable
     public void Damage(int damage)
     {
         curHealth -= damage;
+        // Trigger the event!!!
+        onHit?.Invoke(damage);
         Debug.Log("took " + damage + " damage!");
     }
 }
