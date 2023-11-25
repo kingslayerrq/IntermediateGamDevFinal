@@ -1,4 +1,5 @@
 using DG.Tweening;
+using System.Collections.Generic;
 using UnityEngine;
 
 [RequireComponent(typeof(Player))]
@@ -9,7 +10,12 @@ public class PlayerCombat : MonoBehaviour
     [SerializeField] private float attackRange;
     [SerializeField] private float playerKnockbackDistance;
     [SerializeField] private float playerKnockbackDuration;
-    public Transform attackPoint;
+    #region Attack Points
+    public Transform attackPointHor;
+    public Transform attackPointTop;
+    public Transform attackPointBot;
+    public Transform attackDir;
+    #endregion
     public LayerMask attackableLayers;
     #endregion
 
@@ -18,6 +24,7 @@ public class PlayerCombat : MonoBehaviour
     private void Awake()
     {
         player = GetComponent<Player>();
+       
     }
     private void Start()
     {
@@ -36,8 +43,22 @@ public class PlayerCombat : MonoBehaviour
     void attack()
     {
         Debug.Log("attacking");
+        // Get direction of attack
+        if (Input.GetKey(player.upKey) || Input.GetKeyDown(player.upKey))
+        {
+            attackDir = attackPointTop;
+        }
+        else if (Input.GetKey(player.downKey) || Input.GetKeyDown(player.downKey))
+        {
+            attackDir = attackPointBot;
+        }
+        else
+        {
+            Debug.Log("default attack direction");
+            attackDir = attackPointHor;
+        }
         // detect targets hit
-        Collider2D[] targetsHit = Physics2D.OverlapCircleAll(attackPoint.position, attackRange, attackableLayers);
+        Collider2D[] targetsHit = Physics2D.OverlapCircleAll(attackDir.position, attackRange, attackableLayers);
         //TODO: render slash
 
 
@@ -75,11 +96,11 @@ public class PlayerCombat : MonoBehaviour
     private void OnDrawGizmosSelected()
     {
 
-        if (!attackPoint)
+        if (!attackDir)
         {
             return;
         }
-        Gizmos.DrawWireSphere(attackPoint.position, attackRange);
+        Gizmos.DrawWireSphere(attackDir.position, attackRange);
     }
     #endregion
 }
