@@ -974,7 +974,7 @@ MonoBehaviour:
   attackRange: 1
   playerKnockbackDistance: 0.6
   playerKnockbackDuration: 0.2
-  attackPointHor: {fileID: 0}
+  attackPointHor: {fileID: 752003782}
   attackPointTop: {fileID: 0}
   attackPointBot: {fileID: 0}
   attackDir: {fileID: 0}
@@ -994,7 +994,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   curHealth: 0
-  maxHealth: 0
+  maxHealth: 5
   maxSlowGauge: 0
   curSlowGauge: 0
   curPlayerState: 0

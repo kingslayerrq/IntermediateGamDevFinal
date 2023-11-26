@@ -59,6 +59,17 @@ public class PlayerCombat : MonoBehaviour
         }
         // detect targets hit
         Collider2D[] targetsHit = Physics2D.OverlapCircleAll(attackDir.position, attackRange, attackableLayers);
+
+        // Call TakeDamage on the enemy script
+        foreach (Collider2D target in targetsHit)
+        {
+            EnemyControl enemy = target.GetComponent<EnemyControl>();
+            if (enemy != null)
+            {
+                enemy.TakeDamage(); 
+            }
+        }
+
         //TODO: render slash
 
 
