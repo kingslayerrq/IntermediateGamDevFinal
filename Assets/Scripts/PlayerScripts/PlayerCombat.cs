@@ -6,6 +6,8 @@ using UnityEngine;
 public class PlayerCombat : MonoBehaviour
 {
     private Player player;
+    [SerializeField] private int attackDamage;
+    [SerializeField] private float knockbackForceSelf;
 
     #region Attack variables
     [SerializeField] private float attackRange;
@@ -44,6 +46,9 @@ public class PlayerCombat : MonoBehaviour
     {
         Debug.Log("attacking");
         // Get direction of attack
+        int attackFromX = player.isFacingRight ? 1 : -1;
+        // Knock enemy back horizontally
+        Vector2 attackFrom = new Vector2(attackFromX, 0);
         if (Input.GetKey(player.upKey) || Input.GetKeyDown(player.upKey))
         {
             attackDir = attackPointTop;
@@ -57,16 +62,18 @@ public class PlayerCombat : MonoBehaviour
             Debug.Log("default attack direction");
             attackDir = attackPointHor;
         }
+
         // detect targets hit
         Collider2D[] targetsHit = Physics2D.OverlapCircleAll(attackDir.position, attackRange, attackableLayers);
 
         // Call TakeDamage on the enemy script
         foreach (Collider2D target in targetsHit)
         {
-            EnemyControl enemy = target.GetComponent<EnemyControl>();
-            if (enemy != null)
+            Debug.Log("hit enemy");
+            var enemy = target.GetComponent<BaseEnemy>();
+            if (enemy)
             {
-                enemy.TakeDamage(); 
+                enemy.takeDamage(attackDamage, attackFrom);
             }
         }
 
@@ -74,32 +81,16 @@ public class PlayerCombat : MonoBehaviour
 
 
 
-        //player knockback should only occur when the nail hits something
+        //TODO: player knockback should only occur when the nail hits anything
         if (targetsHit.Length > 0)
         {
-            float endX;
-            if (player.isFacingRight)
-            {
-                endX = transform.position.x - playerKnockbackDistance;
-            }
-            else
-            {
-                endX = transform.position.x + playerKnockbackDistance;
-            }
-            transform.DOMoveX(endX, playerKnockbackDuration);
+            int kbDirection = player.isFacingRight ? -1 : 1;
+            Vector2 kbFrom = new Vector2(kbDirection, 0);
+            player.playerRb.AddForce(kbFrom * knockbackForceSelf, ForceMode2D.Impulse);
+            Debug.Log("self kb");
+
         }
 
-        foreach (Collider2D target in targetsHit)
-        {
-            if (target.gameObject.layer == 3)
-            {
-                Debug.Log("we hit a platform");
-            }
-            else if (target.gameObject.layer == 7)
-            {
-                Debug.Log("we hit an enemy");
-            }
-        }
     }
 
 

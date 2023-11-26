@@ -17,7 +17,7 @@ public class PlayerController : MonoBehaviour
     [Tooltip("Time it takes to perform a dash")][SerializeField] private float dashDuration;
 
    
-    private Rigidbody2D playerRb;
+    
 
   
 
@@ -30,7 +30,6 @@ public class PlayerController : MonoBehaviour
 
     private void Awake()
     {
-        playerRb = GetComponent<Rigidbody2D>();
         player = GetComponent<Player>();
     }
    
@@ -48,12 +47,12 @@ public class PlayerController : MonoBehaviour
         // Jump
         if (Input.GetKeyDown(player.jmpKey) && player.isGrounded)
         {
-            playerRb.velocity = new Vector2(playerRb.velocity.x, jmpForce);
+            player.playerRb.velocity = new Vector2(player.playerRb.velocity.x, jmpForce);
         }
         // As soon as jmpkey released, set yvel => 0
-        if (Input.GetKeyUp(player.jmpKey) && playerRb.velocity.y > 0)
+        if (Input.GetKeyUp(player.jmpKey) && player.playerRb.velocity.y > 0)
         {
-            playerRb.velocity = new Vector2(playerRb.velocity.x, 0);
+            player.playerRb.velocity = new Vector2(player.playerRb.velocity.x, 0);
         }
         #endregion
 
@@ -103,7 +102,7 @@ public class PlayerController : MonoBehaviour
             turn = new Vector3(transform.rotation.x, 0f, transform.rotation.z);   
         }
         // Rotate
-        transform.DORotate(turn, turnSpeed);
+        transform.DORotate(turn, turnSpeed * Time.unscaledDeltaTime);
         player.isFacingRight = !player.isFacingRight;
     }
 
