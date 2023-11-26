@@ -1,9 +1,22 @@
+using System;
 using UnityEngine;
 
 
-public class Player : MonoBehaviour
+public class Player : MonoBehaviour, IDamageable, IResourceGauge
 {
+    [Header("Player's Current Info")]
+    public int curHealth;
+    public int maxHealth;
+    public float maxSlowGauge;
+    public float curSlowGauge;
+    public playerState curPlayerState;
+    public bool isGrounded;
+    public bool isFacingRight;
+
+
     [Header("Player's KeyBinds")]
+    public KeyCode upKey = KeyCode.UpArrow;
+    public KeyCode downKey = KeyCode.DownArrow;
     public KeyCode leftKey = KeyCode.LeftArrow;
     public KeyCode rightKey = KeyCode.RightArrow;
     public KeyCode jmpKey = KeyCode.Z;
@@ -17,12 +30,12 @@ public class Player : MonoBehaviour
     [Tooltip("Buffer distance for Ground Check")][SerializeField] private float checkGroundBuffer;
     private CapsuleCollider2D playerCollider;
 
+    // Events to trigger
+    public event Action<int> onHit;
+    public event Action<int> onRecover;
+    public event Action<float> onEnergySpent;
+    public event Action<float> onEnergyRecover;
 
-
-    [Header("Player's Current Info")]
-    public playerState curPlayerState;
-    public bool isGrounded;
-    public bool isFacingRight;
 
 
 
@@ -43,10 +56,18 @@ public class Player : MonoBehaviour
     private void Start()
     {
         isFacingRight = true;
+        curHealth = maxHealth;
+        curSlowGauge = maxSlowGauge;
     }
     private void Update()
     {
         checkGrounded();
+        
+        if (curHealth == 0)
+        {
+            Debug.Log("you died!");
+            // respawn
+        }
     }
 
     #region Ground Check
@@ -62,6 +83,34 @@ public class Player : MonoBehaviour
         {
             isGrounded = false;
         }
+    }
+
+    #endregion
+
+    #region IDamageable Methods
+    public void Damage(int damage)
+    {
+        curHealth -= damage;
+        onHit?.Invoke(damage);
+        Debug.Log("took " + damage + " damage!");
+    }
+    #endregion
+
+    #region IResourceGauge Methods
+    public void gainResource(float gain)
+    {
+        curSlowGauge += gain;
+        // Convert gain to percentage
+        float gainPerc = gain / maxSlowGauge;
+        onEnergyRecover?.Invoke(gainPerc);
+    }
+
+    public void useResource(float amount)
+    {
+        curSlowGauge -= amount;
+        // Convert amount to percentage
+        float amountPerc = amount / maxSlowGauge;
+        onEnergySpent?.Invoke(amountPerc);
     }
     #endregion
 }
