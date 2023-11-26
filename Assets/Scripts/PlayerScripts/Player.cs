@@ -9,9 +9,11 @@ public class Player : MonoBehaviour, IDamageable, IResourceGauge
     public int maxHealth;
     public float maxSlowGauge;
     public float curSlowGauge;
+    [SerializeField] private float knockbackForce;
     public playerState curPlayerState;
     public bool isGrounded;
     public bool isFacingRight;
+    public bool isUnstoppable;
 
 
     [Header("Player's KeyBinds")]
@@ -28,13 +30,15 @@ public class Player : MonoBehaviour, IDamageable, IResourceGauge
     public LayerMask groundLayers;
     private float checkGroundDist;
     [Tooltip("Buffer distance for Ground Check")][SerializeField] private float checkGroundBuffer;
-    private CapsuleCollider2D playerCollider;
+    public CapsuleCollider2D playerCollider;
+
+    public Rigidbody2D playerRb;
 
     // Events to trigger
-    public event Action<int> onHit;
-    public event Action<int> onRecover;
-    public event Action<float> onEnergySpent;
-    public event Action<float> onEnergyRecover;
+    public event Action<int> onHitUI;
+    public event Action<int> onRecoverUI;
+    public event Action<float> onEnergySpentUI;
+    public event Action<float> onEnergyRecoverUI;
 
 
 
@@ -52,6 +56,7 @@ public class Player : MonoBehaviour, IDamageable, IResourceGauge
     private void Awake()
     {
         playerCollider = GetComponent<CapsuleCollider2D>();
+        playerRb = GetComponent<Rigidbody2D>();
     }
     private void Start()
     {
@@ -63,11 +68,7 @@ public class Player : MonoBehaviour, IDamageable, IResourceGauge
     {
         checkGrounded();
         
-        if (curHealth == 0)
-        {
-            Debug.Log("you died!");
-            // respawn
-        }
+        
     }
 
     #region Ground Check
@@ -88,11 +89,25 @@ public class Player : MonoBehaviour, IDamageable, IResourceGauge
     #endregion
 
     #region IDamageable Methods
-    public void Damage(int damage)
+    public void takeDamage(int damage, Vector2? from = null)
     {
-        curHealth -= damage;
-        onHit?.Invoke(damage);
         Debug.Log("took " + damage + " damage!");
+        onHitUI?.Invoke(damage);
+        // Knock Player back a little from the position of attacker
+        if (!isUnstoppable)
+        {
+            Vector2 attackPos = from ?? Vector2.zero;
+            playerRb.AddForce(knockbackForce * attackPos, ForceMode2D.Impulse);
+        }
+        if (curHealth > damage)
+        {
+            curHealth -= damage;
+        }
+        else
+        {
+            Debug.Log("Player died!");
+            Destroy(gameObject);
+        }
     }
     #endregion
 
@@ -102,7 +117,7 @@ public class Player : MonoBehaviour, IDamageable, IResourceGauge
         curSlowGauge += gain;
         // Convert gain to percentage
         float gainPerc = gain / maxSlowGauge;
-        onEnergyRecover?.Invoke(gainPerc);
+        onEnergyRecoverUI?.Invoke(gainPerc);
     }
 
     public void useResource(float amount)
@@ -110,7 +125,7 @@ public class Player : MonoBehaviour, IDamageable, IResourceGauge
         curSlowGauge -= amount;
         // Convert amount to percentage
         float amountPerc = amount / maxSlowGauge;
-        onEnergySpent?.Invoke(amountPerc);
+        onEnergySpentUI?.Invoke(amountPerc);
     }
     #endregion
 }

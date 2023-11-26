@@ -25,10 +25,10 @@ public class PlayerUI : MonoBehaviour
     {
         player = GetComponent<Player>();
         // Subscribe to player instance events
-        player.onHit += removeHeart;
-        player.onRecover += addHeart;
-        player.onEnergyRecover += increaseGauge;
-        player.onEnergySpent += decreaseGauge;
+        player.onHitUI += removeHeart;
+        player.onRecoverUI += addHeart;
+        player.onEnergyRecoverUI += increaseGauge;
+        player.onEnergySpentUI += decreaseGauge;
     }
 
     private void Start()
@@ -62,12 +62,15 @@ public class PlayerUI : MonoBehaviour
     // Remove X heart from List's End
     void removeHeart(int num)
     {
+        Debug.Log("removing hearts");
         for (int i = 0; i < num; i++)
         {
+
             var heartToRemove = heartList.LastOrDefault();
             if (heartToRemove)
             {
                 heartList.Remove(heartToRemove);
+                Destroy(heartToRemove);
             }
             else
             {
@@ -92,9 +95,9 @@ public class PlayerUI : MonoBehaviour
     private void OnDestroy()                    
     {
         // Unsubscribe to player instance events
-        player.onHit -= removeHeart;
-        player.onRecover -= addHeart;
-        player.onEnergyRecover -= increaseGauge;
-        player.onEnergySpent -= decreaseGauge;
+        player.onHitUI -= removeHeart;
+        player.onRecoverUI -= addHeart;
+        player.onEnergyRecoverUI -= increaseGauge;
+        player.onEnergySpentUI -= decreaseGauge;
     }
 }
