@@ -943,6 +943,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 595d3a43acf85eb4381443f726ed1624, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  slowDownRecoverOffset: 0
   minSlowDownDuration: 2
 --- !u!114 &984455472
 MonoBehaviour:
@@ -957,8 +958,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   playerTimeSlowFactor: 0.05
-  maxSlowGauge: 5
-  curSlowGauge: 0
   slowGaugeRecoverFactor: 0
 --- !u!114 &984455473
 MonoBehaviour:
@@ -975,7 +974,10 @@ MonoBehaviour:
   attackRange: 1
   playerKnockbackDistance: 0.6
   playerKnockbackDuration: 0.2
-  attackPoint: {fileID: 752003782}
+  attackPointHor: {fileID: 0}
+  attackPointTop: {fileID: 0}
+  attackPointBot: {fileID: 0}
+  attackDir: {fileID: 0}
   attackableLayers:
     serializedVersion: 2
     m_Bits: 72
@@ -991,6 +993,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 64ea38f2907633243814a0b12c33912e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  curHealth: 0
+  maxHealth: 0
+  maxSlowGauge: 0
+  curSlowGauge: 0
+  curPlayerState: 0
+  isGrounded: 0
+  isFacingRight: 0
+  upKey: 273
+  downKey: 274
   leftKey: 276
   rightKey: 275
   jmpKey: 122
@@ -1001,9 +1012,6 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 8
   checkGroundBuffer: 0.001
-  curPlayerState: 0
-  isGrounded: 0
-  isFacingRight: 0
 --- !u!1 &1279279146
 GameObject:
   m_ObjectHideFlags: 0
