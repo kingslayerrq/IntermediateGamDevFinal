@@ -4,52 +4,52 @@ using UnityEngine;
 
 public class EnemyControl : MonoBehaviour
 {
-
     [SerializeField] private float moveSpeed;
     public Transform groundDetection;
-    private bool movingRight = true;
 
-    // Layer mask to detect platforms
+    private bool movingRight = true;
     private LayerMask platformLayerMask;
 
-    // Start is called before the first frame update
+    // Enemy health
+    private int health = 3;
+
     void Start()
     {
         platformLayerMask = LayerMask.GetMask("Platform");
     }
 
-    // Update is called once per frame
     void Update()
     {
-        if (movingRight)
-        {
-            transform.Translate(Vector2.right * moveSpeed * Time.deltaTime);
-        }
-        else{
-            transform.Translate(Vector2.left * moveSpeed * Time.deltaTime);
-        }
-        
+        Move();
 
+        //detects edge and turn around
         RaycastHit2D groundInfo = Physics2D.Raycast(groundDetection.position, Vector2.down, 1f, platformLayerMask);
-        Debug.DrawLine(groundDetection.position, groundDetection.position + new Vector3(0, -1f, 0), Color.red);
+        Debug.DrawLine(groundDetection.position, groundDetection.position + Vector3.down, Color.red);
 
-        if (groundInfo.collider == true)
-        {
-            Debug.Log("On Platform");
-        }
         if (groundInfo.collider == false)
         {
-            Debug.Log("On Edge");
-            if (movingRight == true)
-            {
-                transform.eulerAngles = new Vector3(0, 0, 0);
-                movingRight = false;
-            }
-            else
-            {
-                transform.eulerAngles = new Vector3(0, -180, 0);
-                movingRight = true;
-            }
+            Flip();
+        }
+    }
+
+    void Move()
+    {
+        Vector2 moveDirection = (transform.localScale.x > 0) ? Vector2.right : Vector2.left;
+        transform.Translate(moveDirection * moveSpeed * Time.deltaTime);
+    }
+
+    void Flip()
+    {
+        movingRight = !movingRight;
+        transform.localScale = new Vector3(-transform.localScale.x, transform.localScale.y, transform.localScale.z);
+    }
+
+    public void TakeDamage()
+    {
+        health -= 1;
+        if (health <= 0)
+        {
+            Destroy(gameObject); // Destroy the enemy
         }
     }
 }

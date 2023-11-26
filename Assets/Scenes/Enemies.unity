@@ -473,11 +473,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8be626bb9e64f445ea0e745f8acae876, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  panUp: 273
-  panDown: 274
-  cameraOffset: {x: 0, y: 0, z: -10}
-  cameraSpeed: 1
-  player: {fileID: 984455468}
+  cam1: {fileID: 0}
+  cam2: {fileID: 0}
 --- !u!114 &519420034
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -556,6 +553,7 @@ GameObject:
   - component: {fileID: 662963064}
   - component: {fileID: 662963063}
   - component: {fileID: 662963067}
+  - component: {fileID: 662963068}
   m_Layer: 6
   m_Name: floor enemy
   m_TagString: Untagged
@@ -686,7 +684,7 @@ Transform:
   m_GameObject: {fileID: 662963062}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 3.2, y: -3.41, z: 0}
+  m_LocalPosition: {x: 3.2, y: -3.5, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -707,6 +705,27 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   moveSpeed: 2
   groundDetection: {fileID: 1279279147}
+--- !u!95 &662963068
+Animator:
+  serializedVersion: 5
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 662963062}
+  m_Enabled: 1
+  m_Avatar: {fileID: 0}
+  m_Controller: {fileID: 9100000, guid: c60464be801a14691b9ff0e115d4d370, type: 2}
+  m_CullingMode: 0
+  m_UpdateMode: 0
+  m_ApplyRootMotion: 0
+  m_LinearVelocityBlending: 0
+  m_StabilizeFeet: 0
+  m_WarningMessage: 
+  m_HasTransformHierarchy: 1
+  m_AllowConstantClipSamplingOptimization: 1
+  m_KeepAnimatorStateOnDisable: 0
+  m_WriteDefaultValuesOnDisable: 0
 --- !u!1 &752003781
 GameObject:
   m_ObjectHideFlags: 0
@@ -924,6 +943,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 595d3a43acf85eb4381443f726ed1624, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  slowDownRecoverOffset: 0
   minSlowDownDuration: 2
 --- !u!114 &984455472
 MonoBehaviour:
@@ -938,8 +958,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   playerTimeSlowFactor: 0.05
-  maxSlowGauge: 5
-  curSlowGauge: 0
   slowGaugeRecoverFactor: 0
 --- !u!114 &984455473
 MonoBehaviour:
@@ -956,7 +974,10 @@ MonoBehaviour:
   attackRange: 1
   playerKnockbackDistance: 0.6
   playerKnockbackDuration: 0.2
-  attackPoint: {fileID: 752003782}
+  attackPointHor: {fileID: 752003782}
+  attackPointTop: {fileID: 0}
+  attackPointBot: {fileID: 0}
+  attackDir: {fileID: 0}
   attackableLayers:
     serializedVersion: 2
     m_Bits: 72
@@ -972,6 +993,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 64ea38f2907633243814a0b12c33912e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  curHealth: 0
+  maxHealth: 5
+  maxSlowGauge: 0
+  curSlowGauge: 0
+  curPlayerState: 0
+  isGrounded: 0
+  isFacingRight: 0
+  upKey: 273
+  downKey: 274
   leftKey: 276
   rightKey: 275
   jmpKey: 122
@@ -982,9 +1012,6 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 8
   checkGroundBuffer: 0.001
-  curPlayerState: 0
-  isGrounded: 0
-  isFacingRight: 0
 --- !u!1 &1279279146
 GameObject:
   m_ObjectHideFlags: 0
