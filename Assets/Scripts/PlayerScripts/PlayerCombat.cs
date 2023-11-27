@@ -53,7 +53,7 @@ public class PlayerCombat : MonoBehaviour
         {
             attackDir = attackPointTop;
         }
-        else if (Input.GetKey(player.downKey) || Input.GetKeyDown(player.downKey))
+        else if ((Input.GetKey(player.downKey) || Input.GetKeyDown(player.downKey)) && !player.isGrounded)
         {
             attackDir = attackPointBot;
         }
