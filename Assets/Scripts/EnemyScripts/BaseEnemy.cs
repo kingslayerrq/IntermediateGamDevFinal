@@ -1,3 +1,4 @@
+using System.Collections;
 using UnityEngine;
 
 public class BaseEnemy : MonoBehaviour, IDamageable
@@ -8,6 +9,9 @@ public class BaseEnemy : MonoBehaviour, IDamageable
     public int curHealth;
     [SerializeField] protected float moveSpeed;
     [SerializeField] protected float knockbackForce;
+    [Header("Knockback Settings")]
+    [SerializeField] private float knockbackDuration ;
+    [SerializeField] private float knockbackMultiplier ;
 
 
     protected LayerMask platformLayerMask;
@@ -81,7 +85,7 @@ public class BaseEnemy : MonoBehaviour, IDamageable
         if (!isUnstoppable)
         {
             Vector2 attackPos = from ?? Vector2.zero;
-            enemyRb.AddForce(knockbackForce * attackPos, ForceMode2D.Impulse);
+            StartCoroutine(KnockbackRoutine(attackPos * knockbackForce));
         }
         if (curHealth > damage)
         {
@@ -94,5 +98,15 @@ public class BaseEnemy : MonoBehaviour, IDamageable
         }
     }
 
-    
+    IEnumerator KnockbackRoutine(Vector2 knockback)
+    {
+        float elapsed = 0f;
+
+        while (elapsed < knockbackDuration)
+        {
+            transform.position += (Vector3)(knockback * knockbackMultiplier) * Time.deltaTime / knockbackDuration;
+            elapsed += Time.deltaTime;
+            yield return null;
+        }
+    }
 }

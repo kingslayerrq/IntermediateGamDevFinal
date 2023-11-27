@@ -2,18 +2,16 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class FlyingEnemy : MonoBehaviour
+public class FlyingEnemy : BaseEnemy // Inherit from BaseEnemy
 {
-    [SerializeField] public float detectionRange = 5f;
-    [SerializeField] public float attackRange = 1f;
-    [SerializeField] public float moveSpeed = 2f;
-    [SerializeField] public float attackSpeed = 5f;
-    [SerializeField] public float retreatDistance = 3f;
+    [SerializeField] private float detectionRange = 5f;
+    [SerializeField] private float attackRange = 1f;
+    [SerializeField] private float attackSpeed = 5f;
+    [SerializeField] private float retreatDistance = 3f;
     [SerializeField] private float pauseAfterAttack = 1f;
 
     private Vector3 attackTargetPosition;
-    private bool isAttackInProgress = false;
-
+    public bool isAttackInProgress ;
     private Transform player;
     private Vector3 initialPosition;
     private float distanceToPlayer;
@@ -28,15 +26,17 @@ public class FlyingEnemy : MonoBehaviour
 
     private State currentState;
 
-    void Start()
+    protected override void Start()
     {
+        base.Start(); // Call the Start method of BaseEnemy
         player = GameObject.FindGameObjectWithTag("Player").transform;
         initialPosition = transform.position;
         currentState = State.Idle;
     }
 
-    void Update()
+    protected override void Update()
     {
+        base.Update(); // Optionally call the Update method of BaseEnemy
         if (player == null) return;
 
         distanceToPlayer = Vector3.Distance(transform.position, player.position);
@@ -92,7 +92,6 @@ public class FlyingEnemy : MonoBehaviour
 
     void HandleRetreatState()
     {
-        // Move back to initial position or away from the player
         transform.position = Vector3.MoveTowards(transform.position, initialPosition, moveSpeed * Time.deltaTime);
 
         if (Vector3.Distance(transform.position, initialPosition) < retreatDistance)
@@ -106,10 +105,7 @@ public class FlyingEnemy : MonoBehaviour
         isAttackInProgress = true;
         yield return new WaitForSeconds(2f); // Wait for 2 seconds
 
-        // Get player's position at this moment
         attackTargetPosition = player.position;
-
-        // Move towards the target position
         AttackMovement();
     }
 
@@ -117,7 +113,6 @@ public class FlyingEnemy : MonoBehaviour
     {
         transform.position = Vector3.MoveTowards(transform.position, attackTargetPosition, attackSpeed * Time.deltaTime);
 
-        // Check if reached target position
         if (Vector3.Distance(transform.position, attackTargetPosition) < 0.1f)
         {
             StartCoroutine(PauseAfterAttack());
@@ -127,9 +122,9 @@ public class FlyingEnemy : MonoBehaviour
     IEnumerator PauseAfterAttack()
     {
         yield return new WaitForSeconds(pauseAfterAttack);
-        Debug.Log("Pause");
-
         isAttackInProgress = false; // Reset the attack flag
         currentState = State.Retreat; // Transition to Retreat state after pausing
     }
+
+    
 }
