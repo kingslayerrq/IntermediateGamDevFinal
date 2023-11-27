@@ -47,6 +47,11 @@ public class BaseEnemy : MonoBehaviour, IDamageable
         movingRight = !movingRight;
         transform.localScale = new Vector3(-transform.localScale.x, transform.localScale.y, transform.localScale.z);
     }
+
+    protected virtual void FlipSprite()
+    {
+        transform.localScale = new Vector3(-transform.localScale.x, transform.localScale.y, transform.localScale.z);
+    }
     protected virtual void checkGrounded()
     {
 

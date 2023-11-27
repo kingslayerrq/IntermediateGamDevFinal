@@ -11,6 +11,10 @@ public class GroundEnemy : BaseEnemy
     {
         base.Start();
         platformLayerMask = LayerMask.GetMask("Platform");
+            if (!movingRight)
+        {
+            FlipSprite();
+        }
     }
 
     protected override void Update()
@@ -32,6 +36,7 @@ public class GroundEnemy : BaseEnemy
 
         if (groundInfo.collider == false)
         {
+            Debug.Log("edge");
             this.Flip();
         }
     }
