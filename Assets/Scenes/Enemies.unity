@@ -550,7 +550,7 @@ GameObject:
   m_Component:
   - component: {fileID: 662963066}
   - component: {fileID: 662963065}
-  - component: {fileID: 662963064}
+  - component: {fileID: 662963069}
   - component: {fileID: 662963063}
   - component: {fileID: 662963067}
   - component: {fileID: 662963068}
@@ -588,41 +588,6 @@ Rigidbody2D:
   m_SleepingMode: 1
   m_CollisionDetection: 0
   m_Constraints: 0
---- !u!58 &662963064
-CircleCollider2D:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 662963062}
-  m_Enabled: 1
-  m_Density: 1
-  m_Material: {fileID: 0}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_LayerOverridePriority: 0
-  m_ForceSendLayers:
-    serializedVersion: 2
-    m_Bits: 4294967295
-  m_ForceReceiveLayers:
-    serializedVersion: 2
-    m_Bits: 4294967295
-  m_ContactCaptureLayers:
-    serializedVersion: 2
-    m_Bits: 4294967295
-  m_CallbackLayers:
-    serializedVersion: 2
-    m_Bits: 4294967295
-  m_IsTrigger: 0
-  m_UsedByEffector: 0
-  m_UsedByComposite: 0
-  m_Offset: {x: 0, y: 0}
-  serializedVersion: 2
-  m_Radius: 0.5
 --- !u!212 &662963065
 SpriteRenderer:
   m_ObjectHideFlags: 0
@@ -703,8 +668,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8f3be167bd1824e45ad400dfbdc61e38, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  attackDamage: 0
+  maxHealth: 0
+  curHealth: 0
   moveSpeed: 2
-  groundDetection: {fileID: 1279279147}
+  knockbackForce: 0
+  checkGroundBuffer: 0
+  movingRight: 0
+  isUnstoppable: 0
 --- !u!95 &662963068
 Animator:
   serializedVersion: 5
@@ -726,6 +697,41 @@ Animator:
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorStateOnDisable: 0
   m_WriteDefaultValuesOnDisable: 0
+--- !u!70 &662963069
+CapsuleCollider2D:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 662963062}
+  m_Enabled: 1
+  m_Density: 1
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_ForceSendLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_ForceReceiveLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_ContactCaptureLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_CallbackLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_IsTrigger: 0
+  m_UsedByEffector: 0
+  m_UsedByComposite: 0
+  m_Offset: {x: 0, y: 0}
+  m_Size: {x: 1, y: 1}
+  m_Direction: 0
 --- !u!1 &752003781
 GameObject:
   m_ObjectHideFlags: 0
@@ -971,6 +977,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a45fe0490779e8f42914f87c4afec30c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  attackDamage: 0
+  knockbackForceSelf: 0
   attackRange: 1
   playerKnockbackDistance: 0.6
   playerKnockbackDuration: 0.2
@@ -997,9 +1005,11 @@ MonoBehaviour:
   maxHealth: 5
   maxSlowGauge: 0
   curSlowGauge: 0
+  knockbackForce: 0
   curPlayerState: 0
   isGrounded: 0
   isFacingRight: 0
+  isUnstoppable: 0
   upKey: 273
   downKey: 274
   leftKey: 276
@@ -1012,6 +1022,8 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 8
   checkGroundBuffer: 0.001
+  playerCollider: {fileID: 0}
+  playerRb: {fileID: 0}
 --- !u!1 &1279279146
 GameObject:
   m_ObjectHideFlags: 0
