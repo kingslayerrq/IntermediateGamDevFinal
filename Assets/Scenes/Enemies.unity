@@ -1156,7 +1156,7 @@ MonoBehaviour:
   maxHealth: 3
   curHealth: 3
   moveSpeed: 2
-  knockbackForce: 0
+  knockbackForce: 3
   knockbackDuration: 0.2
   knockbackMultiplier: 1
   checkGroundBuffer: 0
@@ -1286,7 +1286,7 @@ MonoBehaviour:
   maxHealth: 3
   curHealth: 0
   moveSpeed: 2.3
-  knockbackForce: 10
+  knockbackForce: 3
   knockbackDuration: 0.2
   knockbackMultiplier: 1
   checkGroundBuffer: 0
@@ -1466,6 +1466,8 @@ GameObject:
   - component: {fileID: 984455473}
   - component: {fileID: 984455472}
   - component: {fileID: 984455475}
+  - component: {fileID: 984455476}
+  - component: {fileID: 984455477}
   m_Layer: 0
   m_Name: MC
   m_TagString: Player
@@ -1598,6 +1600,24 @@ MonoBehaviour:
   jmpForce: 20
   dashDistance: 5
   dashDuration: 0.4
+  onJump:
+    m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 984455477}
+        m_TargetAssemblyTypeName: AudioManager, Assembly-CSharp
+        m_MethodName: PlayJumpSFX
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+  onDash:
+    m_PersistentCalls:
+      m_Calls: []
 --- !u!50 &984455470
 Rigidbody2D:
   serializedVersion: 4
@@ -1652,7 +1672,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   playerTimeSlowFactor: 0.05
-  slowGaugeRecoverFactor: 0
+  slowGaugeRecoverFactor: 0.001
 --- !u!114 &984455473
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1693,7 +1713,7 @@ MonoBehaviour:
   maxHealth: 5
   maxSlowGauge: 5
   curSlowGauge: 0
-  knockbackForce: 20
+  knockbackForce: 5
   curPlayerState: 0
   isGrounded: 0
   isFacingRight: 0
@@ -1729,6 +1749,118 @@ MonoBehaviour:
   SoulGaugeFill: {fileID: 597614594}
   curFillAmount: 0
   curHeartNumDisplayed: 0
+--- !u!82 &984455476
+AudioSource:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 984455465}
+  m_Enabled: 1
+  serializedVersion: 4
+  OutputAudioMixerGroup: {fileID: 0}
+  m_audioClip: {fileID: 0}
+  m_PlayOnAwake: 1
+  m_Volume: 1
+  m_Pitch: 1
+  Loop: 0
+  Mute: 0
+  Spatialize: 0
+  SpatializePostEffects: 0
+  Priority: 128
+  DopplerLevel: 1
+  MinDistance: 1
+  MaxDistance: 500
+  Pan2D: 0
+  rolloffMode: 0
+  BypassEffects: 0
+  BypassListenerEffects: 0
+  BypassReverbZones: 0
+  rolloffCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 1
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    - serializedVersion: 3
+      time: 1
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  panLevelCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  spreadCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  reverbZoneMixCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 1
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+--- !u!114 &984455477
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 984455465}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9e196f0b5a52cd24c94a67e3f47ac698, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  playerAudio: {fileID: 0}
+  Jump: {fileID: 8300000, guid: d27b481287b3f93429d0d40e396bb68d, type: 3}
+  Dash: {fileID: 8300000, guid: 3566e71f910bba040a850c63e99cb5df, type: 3}
+  Slash: {fileID: 8300000, guid: 3084bbaf18b672b4b9869379b0ef5e60, type: 3}
 --- !u!1 &1059106156
 GameObject:
   m_ObjectHideFlags: 0

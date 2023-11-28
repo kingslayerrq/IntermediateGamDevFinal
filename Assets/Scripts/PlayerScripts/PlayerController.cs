@@ -1,6 +1,7 @@
 using UnityEngine;
 using DG.Tweening;
 using UnityEditor;
+using UnityEngine.Events;
 
 [RequireComponent(typeof(Rigidbody2D))]
 [RequireComponent(typeof(Player))]
@@ -17,8 +18,9 @@ public class PlayerController : MonoBehaviour
     [Tooltip("Time it takes to perform a dash")][SerializeField] private float dashDuration;
 
    
-    
-
+    private AudioManager playerAudioManager;
+    public UnityEvent onJump = new UnityEvent();
+    public UnityEvent onDash = new UnityEvent();
   
 
 
@@ -30,7 +32,14 @@ public class PlayerController : MonoBehaviour
 
     private void Awake()
     {
+        playerAudioManager = GetComponent<AudioManager>();
         player = GetComponent<Player>();
+    }
+
+    void Start()
+    {
+        onJump.AddListener(playerAudioManager.PlayJumpSFX);
+        onDash.AddListener(playerAudioManager.PlayDashSFX);
     }
    
 
@@ -47,6 +56,7 @@ public class PlayerController : MonoBehaviour
         // Jump
         if (Input.GetKeyDown(player.jmpKey) && player.isGrounded)
         {
+            onJump.Invoke();
             player.playerRb.velocity = new Vector2(player.playerRb.velocity.x, jmpForce);
         }
         // As soon as jmpkey released, set yvel => 0
@@ -59,6 +69,7 @@ public class PlayerController : MonoBehaviour
         #region Dash
         if (Input.GetKeyDown(player.dashKey))
         {
+            onDash.Invoke();
             dash();
         }
         #endregion
