@@ -67,8 +67,6 @@ public class Player : MonoBehaviour, IDamageable, IResourceGauge
     private void Update()
     {
         checkGrounded();
-        
-        
     }
 
     #region Ground Check

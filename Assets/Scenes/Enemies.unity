@@ -1157,8 +1157,8 @@ MonoBehaviour:
   curHealth: 3
   moveSpeed: 2
   knockbackForce: 3
-  knockbackDuration: 0.2
-  knockbackMultiplier: 1
+  knockbackDuration: 0.1
+  knockbackMultiplier: 0.5
   checkGroundBuffer: 0
   movingRight: 0
   isUnstoppable: 0
@@ -1686,7 +1686,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   attackDamage: 1
-  knockbackForceSelf: 1
+  knockbackForceSelf: 7
   attackRange: 1
   playerKnockbackDistance: 0.6
   playerKnockbackDuration: 0.2
@@ -1713,7 +1713,7 @@ MonoBehaviour:
   maxHealth: 5
   maxSlowGauge: 5
   curSlowGauge: 0
-  knockbackForce: 5
+  knockbackForce: 10
   curPlayerState: 0
   isGrounded: 0
   isFacingRight: 0
@@ -2271,8 +2271,8 @@ Transform:
   m_GameObject: {fileID: 1737505676}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0.70909023, w: 0.70511776}
-  m_LocalPosition: {x: 33.15, y: -5.78, z: 0}
-  m_LocalScale: {x: 3.7114317, y: 1, z: 1}
+  m_LocalPosition: {x: 33.1491, y: -5.9345, z: 0}
+  m_LocalScale: {x: 4.0202227, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
@@ -2562,7 +2562,7 @@ Transform:
   m_GameObject: {fileID: 1841055561}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 23.9346, y: -7.15, z: 0}
+  m_LocalPosition: {x: 23.48, y: -7.42, z: 0}
   m_LocalScale: {x: 19.283873, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -2728,8 +2728,8 @@ Transform:
   m_GameObject: {fileID: 1908214506}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0.70909023, w: 0.70511776}
-  m_LocalPosition: {x: 13.8319, y: -5.7681, z: 0}
-  m_LocalScale: {x: 3.7114317, y: 1, z: 1}
+  m_LocalPosition: {x: 13.831, y: -5.9225, z: 0}
+  m_LocalScale: {x: 4.0202227, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
