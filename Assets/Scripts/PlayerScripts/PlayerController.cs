@@ -2,6 +2,11 @@ using UnityEngine;
 using DG.Tweening;
 using UnityEditor;
 using UnityEngine.Events;
+using System.Collections;
+using static UnityEditor.Experimental.GraphView.GraphView;
+using System.Numerics;
+using Vector2 = UnityEngine.Vector2;
+using Vector3 = UnityEngine.Vector3;
 
 [RequireComponent(typeof(Rigidbody2D))]
 [RequireComponent(typeof(Player))]
@@ -14,13 +19,13 @@ public class PlayerController : MonoBehaviour
     [Tooltip("The time it takes for player to rotate its Y-axis")] [SerializeField] private float turnSpeed;
     [SerializeField] private float maxJmpTime;
     [SerializeField] private float jmpForce;
-    [SerializeField] private float dashDistance;
+    [SerializeField] private float dashForce;
     [Tooltip("Time it takes to perform a dash")][SerializeField] private float dashDuration;
 
-   
-    private AudioManager playerAudioManager;
-    public UnityEvent onJump = new UnityEvent();
-    public UnityEvent onDash = new UnityEvent();
+
+    private PlayerAudioManager playerAudioManager;
+    private UnityEvent onJump = new UnityEvent();
+    private UnityEvent onDash = new UnityEvent();
   
 
 
@@ -32,7 +37,7 @@ public class PlayerController : MonoBehaviour
 
     private void Awake()
     {
-        playerAudioManager = GetComponent<AudioManager>();
+        playerAudioManager = GetComponent<PlayerAudioManager>();
         player = GetComponent<Player>();
     }
 
@@ -40,6 +45,7 @@ public class PlayerController : MonoBehaviour
     {
         onJump.AddListener(playerAudioManager.PlayJumpSFX);
         onDash.AddListener(playerAudioManager.PlayDashSFX);
+
     }
    
 
@@ -67,11 +73,13 @@ public class PlayerController : MonoBehaviour
         #endregion
 
         #region Dash
-        if (Input.GetKeyDown(player.dashKey))
+        if (Input.GetKeyDown(player.dashKey) && !player.isDashing)
         {
+            Debug.Log("dashing");
             onDash.Invoke();
-            dash();
+            StartCoroutine("dash");
         }
+        
         #endregion
           
         
@@ -84,14 +92,14 @@ public class PlayerController : MonoBehaviour
         // Move Left
         if (Input.GetKeyDown(player.leftKey) || Input.GetKey(player.leftKey))
         {
-            transform.position = new Vector3(transform.position.x - moveSpeed * Time.deltaTime, transform.position.y, transform.position.z);
+            transform.position = new UnityEngine.Vector3(transform.position.x - moveSpeed * Time.deltaTime, transform.position.y, transform.position.z);
             // Turn if currently facing right
             if (player.isFacingRight) turn();
         }
         // Move Right
         else if (Input.GetKeyDown(player.rightKey) || Input.GetKey(player.rightKey))
         {
-            transform.position = new Vector3(transform.position.x + moveSpeed * Time.deltaTime, transform.position.y, transform.position.z);
+            transform.position = new UnityEngine.Vector3(transform.position.x + moveSpeed * Time.deltaTime, transform.position.y, transform.position.z);
             // Turn if currently facing left
             if (!player.isFacingRight) turn();
         }
@@ -119,21 +127,24 @@ public class PlayerController : MonoBehaviour
 
   
     #region Dash
-    void dash()
+    
+    private IEnumerator dash()
     {
-        // end point of the dash
-        float endX;
-        // Dash towards facing direction
+        player.isDashing = true;
+        var originG = player.playerRb.gravityScale;
+        player.playerRb.gravityScale = 0f;
         if (player.isFacingRight)
         {
-            endX= transform.position.x + dashDistance;
+            player.playerRb.velocity = Vector2.right * dashForce;
         }
         else
         {
-            endX = transform.position.x - dashDistance;
+            player.playerRb.velocity = Vector2.left * dashForce;
         }
-
-        transform.DOMoveX(endX, dashDuration);
+        yield return new WaitForSeconds(dashDuration);
+        player.playerRb.gravityScale = originG;
+        player.playerRb.velocity = Vector2.zero;
+        player.isDashing = false;
     }
     #endregion
 

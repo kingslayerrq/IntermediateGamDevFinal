@@ -14,7 +14,7 @@ public class Player : MonoBehaviour, IDamageable, IResourceGauge
     public bool isGrounded;
     public bool isFacingRight;
     public bool isUnstoppable;
-
+    public bool isDashing;
 
     [Header("Player's KeyBinds")]
     public KeyCode upKey = KeyCode.UpArrow;
@@ -30,9 +30,8 @@ public class Player : MonoBehaviour, IDamageable, IResourceGauge
     public LayerMask groundLayers;
     private float checkGroundDist;
     [Tooltip("Buffer distance for Ground Check")][SerializeField] private float checkGroundBuffer;
-    public CapsuleCollider2D playerCollider;
-
-    public Rigidbody2D playerRb;
+    [HideInInspector] public CapsuleCollider2D playerCollider;
+    [HideInInspector] public Rigidbody2D playerRb;
 
     // Events to trigger
     public event Action<int> onHitUI;
@@ -61,6 +60,7 @@ public class Player : MonoBehaviour, IDamageable, IResourceGauge
     private void Start()
     {
         isFacingRight = true;
+        isDashing = false;
         curHealth = maxHealth;
         curSlowGauge = maxSlowGauge;
     }
