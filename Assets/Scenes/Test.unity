@@ -2383,7 +2383,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   playerTimeSlowFactor: 0.05
-  slowGaugeRecoverFactor: 0.01
+  slowGaugeRecoverFactor: 0
 --- !u!114 &984455473
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2398,6 +2398,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   attackDamage: 0
   knockbackForceSelf: 10
+  resourceGainOnHit: 1
   attackRange: 0.8
   playerKnockbackDistance: 0.2
   playerKnockbackDuration: 0.2

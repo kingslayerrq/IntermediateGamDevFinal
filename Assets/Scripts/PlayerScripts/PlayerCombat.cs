@@ -8,7 +8,7 @@ public class PlayerCombat : MonoBehaviour
     private Player player;
     [SerializeField] private int attackDamage;
     [SerializeField] private float knockbackForceSelf;
-
+    [SerializeField] private float resourceGainOnHit;
     #region Attack variables
     [SerializeField] private float attackRange;
     [SerializeField] private float playerKnockbackDistance;
@@ -73,6 +73,7 @@ public class PlayerCombat : MonoBehaviour
             var enemy = target.GetComponent<BaseEnemy>();
             if (enemy)
             {
+                player.gainResource(resourceGainOnHit);
                 enemy.takeDamage(attackDamage, attackFrom);
             }
         }
