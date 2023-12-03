@@ -9,6 +9,8 @@ public class PlayerCombat : MonoBehaviour
     [SerializeField] private int attackDamage;
     [SerializeField] private float knockbackForceSelf;
     [SerializeField] private float resourceGainOnHit;
+    [SerializeField] private float healResourceReq;
+    [SerializeField] private float healKeyHold;
     #region Attack variables
     [SerializeField] private float attackRange;
     [SerializeField] private float playerKnockbackDistance;
@@ -22,7 +24,9 @@ public class PlayerCombat : MonoBehaviour
     public LayerMask attackableLayers;
     #endregion
 
-
+    // Used to calculate time holding down
+    private float holdTime = 0;
+    private bool canHeal = true;
     private void Awake()
     {
         player = GetComponent<Player>();
@@ -38,6 +42,27 @@ public class PlayerCombat : MonoBehaviour
         if (Input.GetKeyDown(player.atkKey))
         {
             attack();
+        }
+        #endregion
+
+        #region Heal
+        if (player.isGrounded)
+        {
+            if (Input.GetKey(player.healKey) && canHeal)
+            {
+                // Zoom in ?
+                Debug.Log("holding");
+                holdTime += Time.unscaledDeltaTime;
+                if (holdTime >= healKeyHold)
+                {
+                    heal(1);
+                }
+            }
+        }
+        if (Input.GetKeyUp(player.healKey))
+        {
+            canHeal = true;
+            holdTime = 0;
         }
         #endregion
     }
@@ -95,6 +120,17 @@ public class PlayerCombat : MonoBehaviour
     }
 
 
+    void heal(int amount)
+    {
+        canHeal = false;
+        holdTime = 0;
+        if (player.curGauge >= healResourceReq)
+        {
+            player.useResource(healResourceReq);
+            player.gainHealth(amount);
+        }
+        
+    }
     #region Debug
     private void OnDrawGizmosSelected()
     {

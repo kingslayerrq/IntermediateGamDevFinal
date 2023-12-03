@@ -41,7 +41,7 @@ public class PlayerUI : MonoBehaviour
             heartList.Add(Instantiate(heartPrefab, heartLayoutGroup));
         }
         // Initialize Soul Gauge
-        SoulGaugeFill.fillAmount = player.curSlowGauge;
+        SoulGaugeFill.fillAmount = player.curGauge;
     }
 
     private void Update()
@@ -88,7 +88,8 @@ public class PlayerUI : MonoBehaviour
     void decreaseGauge(float amount)            // Parameter {0 - 1}
     {
         float endAmount = Mathf.Clamp(SoulGaugeFill.fillAmount - amount, 0.0f, 1.0f);
-        SoulGaugeFill.DOFillAmount(endAmount, Time.unscaledDeltaTime);
+        Debug.Log("end amount : " + endAmount);
+        SoulGaugeFill.DOFillAmount(endAmount, Time.deltaTime);
     }
     #endregion
 

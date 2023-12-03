@@ -27,27 +27,28 @@ public class PlayerTimeSlow : MonoBehaviour
     private void Update()
     {
         // Recover Time Slow Gauge when not slowing, not exceeding max
-        if (Time.timeScale == 1f && player.curSlowGauge < player.maxSlowGauge)
+        if (Time.timeScale == 1f && player.curGauge < player.maxGauge)
         {
             
             player.gainResource(slowGaugeRecoverFactor);
         }
-        player.curSlowGauge = Mathf.Clamp(player.curSlowGauge, 0, player.maxSlowGauge);
+        player.curGauge = Mathf.Clamp(player.curGauge, 0, player.maxGauge);
 
 
         #region TimeSlow
         if (Input.GetKeyDown(player.timeSlowKey) && Time.timeScale == 1f)
         {
-            if (player.curSlowGauge >= playerTimeSlow.minSlowDownDuration)
+            if (player.curGauge >= playerTimeSlow.minSlowDownDuration)
             {
-                playerTimeSlow.slowDownDuration = player.curSlowGauge;
+                playerTimeSlow.slowDownDuration = player.curGauge;
+                Debug.Log("slowing down " + player.curGauge);
                 playerTimeSlow.slow();
 
             }
         }
 
         // When we are slowing down time, decrease the gauge
-        if (Time.timeScale < 1f && player.curSlowGauge > 0)
+        if (Time.timeScale < 1f && player.curGauge > 0)
         {
             Debug.Log("slowed");
             player.useResource(Time.unscaledDeltaTime);

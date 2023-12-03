@@ -2369,7 +2369,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   slowDownRecoverOffset: 1
-  minSlowDownDuration: 2
+  minSlowDownDuration: 0
 --- !u!114 &984455472
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2399,6 +2399,8 @@ MonoBehaviour:
   attackDamage: 0
   knockbackForceSelf: 10
   resourceGainOnHit: 1
+  healResourceReq: 2
+  healKeyHold: 2.1
   attackRange: 0.8
   playerKnockbackDistance: 0.2
   playerKnockbackDuration: 0.2
@@ -2423,8 +2425,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   curHealth: 0
   maxHealth: 5
-  maxSlowGauge: 5
-  curSlowGauge: 0
+  maxGauge: 5
+  curGauge: 0
   knockbackForce: 8
   curPlayerState: 0
   isGrounded: 0
@@ -2439,6 +2441,7 @@ MonoBehaviour:
   atkKey: 120
   dashKey: 99
   timeSlowKey: 118
+  healKey: 97
   groundLayers:
     serializedVersion: 2
     m_Bits: 8
