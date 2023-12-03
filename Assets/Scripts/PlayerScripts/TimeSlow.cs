@@ -8,7 +8,7 @@ public class TimeSlow : MonoBehaviour
 
     //private float recoverTime = 0;
 
-    public float minSlowDownDuration = 2f;
+    public float minSlowDownDuration = 0f;
     private void Update()
     {
         if (slowDownDuration != 0)
@@ -16,16 +16,10 @@ public class TimeSlow : MonoBehaviour
             
             Time.timeScale += (1f / (slowDownDuration + slowDownRecoverOffset)) * Time.unscaledDeltaTime;
             Time.timeScale = Mathf.Clamp(Time.timeScale, 0, 1);
-            /*if (recoverTime == 1)
-            {
-                recover();
-            }*/
+            
         }
     }
-    /*public void recover()
-    {
-        Time.timeScale = Mathf.Lerp(Time.timeScale, 1, 0.5f);
-    }*/
+
     public void slow()
     {
         Time.timeScale = slowDownFactor;

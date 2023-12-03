@@ -2399,6 +2399,8 @@ MonoBehaviour:
   attackDamage: 0
   knockbackForceSelf: 10
   resourceGainOnHit: 1
+  healResourceReq: 2
+  healKeyHold: 3
   attackRange: 0.8
   playerKnockbackDistance: 0.2
   playerKnockbackDuration: 0.2
@@ -2439,6 +2441,7 @@ MonoBehaviour:
   atkKey: 120
   dashKey: 99
   timeSlowKey: 118
+  healKey: 97
   groundLayers:
     serializedVersion: 2
     m_Bits: 8
