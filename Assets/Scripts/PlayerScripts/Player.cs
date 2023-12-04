@@ -15,6 +15,9 @@ public class Player : MonoBehaviour, IDamageable, IResourceGauge
     public bool isFacingRight;
     public bool isUnstoppable;
     public bool isDashing;
+    public bool canMove;
+    public bool canDash;
+    public bool canAtk;
 
     [Header("Player's KeyBinds")]
     public KeyCode upKey = KeyCode.UpArrow;
@@ -62,14 +65,15 @@ public class Player : MonoBehaviour, IDamageable, IResourceGauge
     {
         isFacingRight = true;
         isDashing = false;
+        canMove = true;
+        canAtk = true;
+        canDash = true;
         curHealth = maxHealth;
         curGauge = maxGauge;
     }
     private void Update()
     {
         checkGrounded();
-        
-        
     }
 
     #region Ground Check

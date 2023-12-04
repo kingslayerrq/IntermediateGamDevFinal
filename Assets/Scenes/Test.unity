@@ -2328,6 +2328,7 @@ MonoBehaviour:
   maxJmpTime: 0.3
   jmpForce: 20
   dashForce: 12
+  dashCoolDown: 1
   dashDuration: 0.2
 --- !u!50 &984455470
 Rigidbody2D:
@@ -2397,6 +2398,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   attackDamage: 0
+  slashCoolDown: 0.6
   knockbackForceSelf: 10
   resourceGainOnHit: 1
   healResourceReq: 2
@@ -2433,6 +2435,9 @@ MonoBehaviour:
   isFacingRight: 0
   isUnstoppable: 0
   isDashing: 0
+  canMove: 0
+  canDash: 0
+  canAtk: 0
   upKey: 273
   downKey: 274
   leftKey: 276

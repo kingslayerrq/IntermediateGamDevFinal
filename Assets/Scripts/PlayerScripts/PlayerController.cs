@@ -3,8 +3,7 @@ using DG.Tweening;
 using UnityEditor;
 using UnityEngine.Events;
 using System.Collections;
-using static UnityEditor.Experimental.GraphView.GraphView;
-using System.Numerics;
+
 using Vector2 = UnityEngine.Vector2;
 using Vector3 = UnityEngine.Vector3;
 
@@ -20,6 +19,7 @@ public class PlayerController : MonoBehaviour
     [SerializeField] private float maxJmpTime;
     [SerializeField] private float jmpForce;
     [SerializeField] private float dashForce;
+    [SerializeField] private float dashCoolDown;
     [Tooltip("Time it takes to perform a dash")][SerializeField] private float dashDuration;
 
 
@@ -51,38 +51,36 @@ public class PlayerController : MonoBehaviour
 
     private void Update()
     {
-        #region Movement
-        // Move
-        move();
-        #endregion
-
-       
-
-        #region Jump
-        // Jump
-        if (Input.GetKeyDown(player.jmpKey) && player.isGrounded)
+        if (player.canMove)
         {
-            onJump.Invoke();
-            player.playerRb.velocity = new Vector2(player.playerRb.velocity.x, jmpForce);
-        }
-        // As soon as jmpkey released, set yvel => 0
-        if (Input.GetKeyUp(player.jmpKey) && player.playerRb.velocity.y > 0)
-        {
-            player.playerRb.velocity = new Vector2(player.playerRb.velocity.x, 0);
-        }
-        #endregion
+            #region Movement
+            // Move
+            move();
+            #endregion
 
-        #region Dash
-        if (Input.GetKeyDown(player.dashKey) && !player.isDashing)
-        {
-            Debug.Log("dashing");
-            onDash.Invoke();
-            StartCoroutine("dash");
+            #region Jump
+            // Jump
+            if (Input.GetKeyDown(player.jmpKey) && player.isGrounded)
+            {
+                onJump.Invoke();
+                player.playerRb.velocity = new Vector2(player.playerRb.velocity.x, jmpForce);
+            }
+            // As soon as jmpkey released, set yvel => 0
+            if (Input.GetKeyUp(player.jmpKey) && player.playerRb.velocity.y > 0)
+            {
+                player.playerRb.velocity = new Vector2(player.playerRb.velocity.x, 0);
+            }
+            #endregion
+
+            #region Dash
+            if (Input.GetKeyDown(player.dashKey) && !player.isDashing && player.canDash)
+            {
+                Debug.Log("dashing");
+                onDash.Invoke();
+                StartCoroutine("dash");
+            }
+            #endregion
         }
-        
-        #endregion
-          
-        
 
     }
 
@@ -141,10 +139,21 @@ public class PlayerController : MonoBehaviour
         {
             player.playerRb.velocity = Vector2.left * dashForce;
         }
-        yield return new WaitForSeconds(dashDuration);
+        yield return new WaitForSecondsRealtime(dashDuration);
         player.playerRb.gravityScale = originG;
         player.playerRb.velocity = Vector2.zero;
         player.isDashing = false;
+
+        // Start the cooldown coroutine after the dash coroutine has completed
+        yield return StartCoroutine("dashCD");
+
+    }
+
+    private IEnumerator dashCD()
+    {
+        player.canDash = false;
+        yield return new WaitForSecondsRealtime(dashCoolDown);
+        player.canDash = true;
     }
     #endregion
 
