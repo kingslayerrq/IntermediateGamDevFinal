@@ -7,14 +7,17 @@ public class Player : MonoBehaviour, IDamageable, IResourceGauge
     [Header("Player's Current Info")]
     public int curHealth;
     public int maxHealth;
-    public float maxSlowGauge;
-    public float curSlowGauge;
+    public float maxGauge;
+    public float curGauge;
     [SerializeField] private float knockbackForce;
     public playerState curPlayerState;
     public bool isGrounded;
     public bool isFacingRight;
     public bool isUnstoppable;
-
+    public bool isDashing;
+    public bool canMove;
+    public bool canDash;
+    public bool canAtk;
 
     [Header("Player's KeyBinds")]
     public KeyCode upKey = KeyCode.UpArrow;
@@ -25,14 +28,14 @@ public class Player : MonoBehaviour, IDamageable, IResourceGauge
     public KeyCode atkKey = KeyCode.X;
     public KeyCode dashKey = KeyCode.C;
     public KeyCode timeSlowKey = KeyCode.V;
+    public KeyCode healKey = KeyCode.A;
 
     [Header("Ground Check")]
     public LayerMask groundLayers;
     private float checkGroundDist;
     [Tooltip("Buffer distance for Ground Check")][SerializeField] private float checkGroundBuffer;
-    public CapsuleCollider2D playerCollider;
-
-    public Rigidbody2D playerRb;
+    [HideInInspector] public CapsuleCollider2D playerCollider;
+    [HideInInspector] public Rigidbody2D playerRb;
 
     // Events to trigger
     public event Action<int> onHitUI;
@@ -61,8 +64,12 @@ public class Player : MonoBehaviour, IDamageable, IResourceGauge
     private void Start()
     {
         isFacingRight = true;
+        isDashing = false;
+        canMove = true;
+        canAtk = true;
+        canDash = true;
         curHealth = maxHealth;
-        curSlowGauge = maxSlowGauge;
+        curGauge = maxGauge;
     }
     private void Update()
     {
@@ -84,6 +91,18 @@ public class Player : MonoBehaviour, IDamageable, IResourceGauge
         }
     }
 
+    #endregion
+
+
+    #region Gain Health
+    public void gainHealth(int health)
+    {
+        if (curHealth > 0 && curHealth < maxHealth)
+        {
+            curHealth += health;
+            onRecoverUI?.Invoke(health);
+        }
+    }
     #endregion
 
     #region IDamageable Methods
@@ -112,17 +131,18 @@ public class Player : MonoBehaviour, IDamageable, IResourceGauge
     #region IResourceGauge Methods
     public void gainResource(float gain)
     {
-        curSlowGauge += gain;
+        curGauge += gain;
         // Convert gain to percentage
-        float gainPerc = gain / maxSlowGauge;
+        float gainPerc = gain / maxGauge;
         onEnergyRecoverUI?.Invoke(gainPerc);
     }
 
     public void useResource(float amount)
     {
-        curSlowGauge -= amount;
+        curGauge -= amount;
         // Convert amount to percentage
-        float amountPerc = amount / maxSlowGauge;
+        float amountPerc = amount / maxGauge;
+        Debug.Log("perc: " + amountPerc);
         onEnergySpentUI?.Invoke(amountPerc);
     }
     #endregion

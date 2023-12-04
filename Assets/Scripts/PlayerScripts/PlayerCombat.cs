@@ -1,4 +1,5 @@
 using DG.Tweening;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -7,8 +8,11 @@ public class PlayerCombat : MonoBehaviour
 {
     private Player player;
     [SerializeField] private int attackDamage;
+    [SerializeField] private float slashCoolDown;
     [SerializeField] private float knockbackForceSelf;
-
+    [SerializeField] private float resourceGainOnHit;
+    [SerializeField] private float healResourceReq;
+    [SerializeField] private float healKeyHold;
     #region Attack variables
     [SerializeField] private float attackRange;
     [SerializeField] private float playerKnockbackDistance;
@@ -22,6 +26,8 @@ public class PlayerCombat : MonoBehaviour
     public LayerMask attackableLayers;
     #endregion
 
+    // Used to calculate time holding down
+    private float holdTime = 0;
 
     private void Awake()
     {
@@ -35,15 +41,48 @@ public class PlayerCombat : MonoBehaviour
     {
         #region Attack
         // Attack (animation determines how often we can detect the input of attack?)
-        if (Input.GetKeyDown(player.atkKey))
+        if (player.canMove && player.canAtk)
         {
-            attack();
+            if (Input.GetKeyDown(player.atkKey))
+            {
+                attack();
+            }
+        }
+        #endregion
+
+        #region Heal
+        if (player.isGrounded)
+        {
+            if (Input.GetKey(player.healKey) && player.curGauge >= healResourceReq && player.curHealth < player.maxHealth)
+            {
+                player.canMove = false;
+                // Zoom in ?
+                Debug.Log("holding");
+                holdTime += Time.unscaledDeltaTime;
+                if (holdTime >= healKeyHold)
+                {
+                    heal(1);
+                }
+            }
+            else
+            {
+                // Does the player become movable if they just recovered a health and the regen key was never let go?
+                player.canMove = true;
+                holdTime = 0;
+            }
+        }
+        // When key lifted reset the hold time and player is movable
+        if (Input.GetKeyUp(player.healKey))
+        {
+            player.canMove = true;
+            holdTime = 0;
         }
         #endregion
     }
 
     void attack()
     {
+        StartCoroutine("slashCD");
         Debug.Log("attacking");
         // Get direction of attack
         int attackFromX = player.isFacingRight ? 1 : -1;
@@ -73,6 +112,7 @@ public class PlayerCombat : MonoBehaviour
             var enemy = target.GetComponent<BaseEnemy>();
             if (enemy)
             {
+                player.gainResource(resourceGainOnHit);
                 enemy.takeDamage(attackDamage, attackFrom);
             }
         }
@@ -94,6 +134,23 @@ public class PlayerCombat : MonoBehaviour
     }
 
 
+    void heal(int amount)
+    {
+        holdTime = 0;
+        if (player.curGauge >= healResourceReq)
+        {
+            player.useResource(healResourceReq);
+            player.gainHealth(amount);
+        }
+        
+    }
+
+    private IEnumerator slashCD()
+    {
+        player.canAtk = false;
+        yield return new WaitForSecondsRealtime(slashCoolDown);
+        player.canAtk = true;
+    }
     #region Debug
     private void OnDrawGizmosSelected()
     {
