@@ -45,8 +45,4 @@ public class GroundEnemy : BaseEnemy
         Vector2 moveDirection = movingRight ? Vector2.right : Vector2.left;
         transform.Translate(moveDirection * moveSpeed * Time.deltaTime);
     }
-
-    
-
-
 }
