@@ -48,7 +48,7 @@ public class PlayerTimeSlow : MonoBehaviour
         }
 
         // When we are slowing down time, decrease the gauge
-        if (Time.timeScale < 1f && player.curGauge > 0)
+        if (Time.timeScale < 1f && player.curGauge > 0 && Time.timeScale > 0f)
         {
             Debug.Log("slowed");
             player.useResource(Time.unscaledDeltaTime);
