@@ -1,4 +1,5 @@
 using System;
+using System.Collections;
 using UnityEngine;
 
 
@@ -15,6 +16,7 @@ public class Player : MonoBehaviour, IDamageable, IResourceGauge
     public bool isFacingRight;
     public bool isUnstoppable;
     public bool isDashing;
+    public bool isInvincible;
     public bool canMove;
     public bool canDash;
     public bool canAtk;
@@ -37,12 +39,14 @@ public class Player : MonoBehaviour, IDamageable, IResourceGauge
     [HideInInspector] public CapsuleCollider2D playerCollider;
     [HideInInspector] public Rigidbody2D playerRb;
 
+    [SerializeField] private float invincibleTime;
+
     // Events to trigger
     public event Action<int> onHitUI;
     public event Action<int> onRecoverUI;
     public event Action<float> onEnergySpentUI;
     public event Action<float> onEnergyRecoverUI;
-
+    public static event Action<float> onPlayerHurt;
 
 
 
@@ -108,23 +112,43 @@ public class Player : MonoBehaviour, IDamageable, IResourceGauge
     #region IDamageable Methods
     public void takeDamage(int damage, Vector2? from = null)
     {
-        Debug.Log("took " + damage + " damage!");
-        onHitUI?.Invoke(damage);
-        // Knock Player back a little from the position of attacker
-        if (!isUnstoppable)
+        if (!isInvincible)
         {
-            Vector2 attackPos = from ?? Vector2.zero;
-            playerRb.AddForce(knockbackForce * attackPos, ForceMode2D.Impulse);
-        }
-        if (curHealth > damage)
-        {
-            curHealth -= damage;
+            Debug.Log("took " + damage + " damage!");
+            onHitUI?.Invoke(damage);
+            // Start invincible timer
+            StartCoroutine(BecomeInvincible());
+            // Knock Player back a little from the position of attacker
+            if (!isUnstoppable)
+            {
+                Vector2 attackPos = from ?? Vector2.zero;
+                playerRb.AddForce(knockbackForce * attackPos, ForceMode2D.Impulse);
+                // Send Freeze signal
+                Player.onPlayerHurt?.Invoke(0);
+            }
+            if (curHealth > damage)
+            {
+            
+                curHealth -= damage;
+            }
+            else
+            {
+                Debug.Log("Player died!");
+                Destroy(gameObject);
+            }
         }
         else
         {
-            Debug.Log("Player died!");
-            Destroy(gameObject);
+            Debug.Log("Im Invincibel!!!");
         }
+    }
+
+    
+    private IEnumerator BecomeInvincible()
+    {
+        isInvincible = true;
+        yield return new WaitForSecondsRealtime(invincibleTime);
+        isInvincible = false;
     }
     #endregion
 
