@@ -11,7 +11,7 @@ public class GroundEnemy : BaseEnemy
     {
         base.Start();
         platformLayerMask = LayerMask.GetMask("Platform");
-            if (!movingRight)
+        if (!movingRight)
         {
             FlipSprite();
         }

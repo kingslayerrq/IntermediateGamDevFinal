@@ -28,7 +28,11 @@ public class BaseEnemy : MonoBehaviour, IDamageable
         enemyCollider = GetComponent<CapsuleCollider2D>();
         enemyRb = GetComponent<Rigidbody2D>();
     }
-    // Start is called before the first frame update
+
+    ///<summary>
+    ///Set Moving direction randomly
+    ///Set Current health to Max
+    ///</summary>
     protected virtual void Start()
     {
         movingRight = Random.Range(0, 1) == 1 ? true : false;
@@ -79,6 +83,7 @@ public class BaseEnemy : MonoBehaviour, IDamageable
             p.takeDamage(attackDamage, attackFrom);
         }
     }
+    #region Idamageable Methods
     public virtual void takeDamage(int damage, Vector2? from)
     {
         // Knockback enemy 
@@ -97,7 +102,7 @@ public class BaseEnemy : MonoBehaviour, IDamageable
             Destroy(gameObject); // Destroy the enemy
         }
     }
-
+    #endregion
     IEnumerator KnockbackRoutine(Vector2 knockback)
     {
         float elapsed = 0f;
