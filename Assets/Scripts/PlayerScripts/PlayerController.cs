@@ -24,16 +24,11 @@ public class PlayerController : MonoBehaviour
 
 
     private PlayerAudioManager playerAudioManager;
-    private UnityEvent onJump = new UnityEvent();
-    private UnityEvent onDash = new UnityEvent();
+    public UnityEvent onJump = new UnityEvent();
+    public UnityEvent onDash = new UnityEvent();
   
 
 
-
-
-
-
-    
 
     private void Awake()
     {
@@ -44,6 +39,7 @@ public class PlayerController : MonoBehaviour
     void Start()
     {
         onJump.AddListener(playerAudioManager.PlayJumpSFX);
+
         onDash.AddListener(playerAudioManager.PlayDashSFX);
 
     }
