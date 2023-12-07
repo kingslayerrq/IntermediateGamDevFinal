@@ -64,7 +64,7 @@ public class BossControl : BaseEnemy
     protected override void Move()
     {
         // Move the boss
-        float moveDirection = movingRight ? 1 : -1;
+        float moveDirection = isMovingRight ? 1 : -1;
         transform.Translate(Vector2.right * moveDirection * attackSpeed * Time.deltaTime);
     }
 

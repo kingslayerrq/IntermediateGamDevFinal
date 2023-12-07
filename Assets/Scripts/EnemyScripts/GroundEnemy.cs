@@ -10,8 +10,8 @@ public class GroundEnemy : BaseEnemy
     protected override void Start()
     {
         base.Start();
-        platformLayerMask = LayerMask.GetMask("Platform");
-        if (!movingRight)
+
+        if (!isMovingRight)
         {
             FlipSprite();
         }
@@ -28,7 +28,7 @@ public class GroundEnemy : BaseEnemy
     {
         checkGroundDist = enemyCollider.size.y * 0.5f + checkGroundBuffer;
         // Add horizontal buffer 
-        int sign = movingRight ? 1 : -1;
+        int sign = isMovingRight ? 1 : -1;
         var nextPosition = new Vector3(transform.position.x + sign * enemyCollider.size.x, transform.position.y, transform.position.z);
         RaycastHit2D groundInfo = Physics2D.CapsuleCast(nextPosition, enemyCollider.size, CapsuleDirection2D.Vertical, 90 , -Vector2.up, checkGroundDist, platformLayerMask);
 
@@ -42,7 +42,7 @@ public class GroundEnemy : BaseEnemy
     }
     protected override void Move()
     {
-        Vector2 moveDirection = movingRight ? Vector2.right : Vector2.left;
+        Vector2 moveDirection = isMovingRight ? Vector2.right : Vector2.left;
         transform.Translate(moveDirection * moveSpeed * Time.deltaTime);
     }
 }

@@ -1,6 +1,7 @@
 using System.Collections;
 using UnityEngine;
 
+[RequireComponent(typeof(Rigidbody2D))]
 public class BaseEnemy : MonoBehaviour, IDamageable
 {
     [Header("Enemy Info")]
@@ -13,16 +14,21 @@ public class BaseEnemy : MonoBehaviour, IDamageable
     [SerializeField] private float knockbackDuration ;
     [SerializeField] private float knockbackMultiplier ;
 
-
-    protected LayerMask platformLayerMask;
+    [Header("Ground Check")]
+    [SerializeField] protected LayerMask platformLayerMask;
     protected float checkGroundDist;
     [SerializeField] protected float checkGroundBuffer;
     protected CapsuleCollider2D enemyCollider;
     protected Rigidbody2D enemyRb;
 
-    public bool movingRight;
+    [Header("Status")]
+    public bool isMovingRight;
     public bool isUnstoppable;
+    public bool isGrounded;
 
+    ///<summary>
+    ///Get collider and rigidbody
+    ///</summary>
     protected virtual void Awake()
     {
         enemyCollider = GetComponent<CapsuleCollider2D>();
@@ -35,7 +41,7 @@ public class BaseEnemy : MonoBehaviour, IDamageable
     ///</summary>
     protected virtual void Start()
     {
-        movingRight = Random.Range(0, 1) == 1 ? true : false;
+        isMovingRight = Random.Range(0, 1) == 1 ? true : false;
         curHealth = maxHealth;
     }
 
@@ -52,7 +58,7 @@ public class BaseEnemy : MonoBehaviour, IDamageable
     }
     protected virtual void Flip()
     {
-        movingRight = !movingRight;
+        isMovingRight = !isMovingRight;
         transform.localScale = new Vector3(-transform.localScale.x, transform.localScale.y, transform.localScale.z);
     }
 
@@ -78,7 +84,7 @@ public class BaseEnemy : MonoBehaviour, IDamageable
         if (collision.collider.CompareTag("Player"))
         {
             var p = collision.gameObject.GetComponent<Player>();
-            int attackFromX = movingRight ? 1 : -1;
+            int attackFromX = isMovingRight ? 1 : -1;
             Vector2 attackFrom = new Vector2(attackFromX, 1);
             p.takeDamage(attackDamage, attackFrom);
         }
