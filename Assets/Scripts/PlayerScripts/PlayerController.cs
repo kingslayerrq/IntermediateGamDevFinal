@@ -13,6 +13,8 @@ public class PlayerController : MonoBehaviour
 {
     private Player player;
 
+    public ChangeBgm changeBgmScript;
+
     [Header("Movement Attributes")]
     [SerializeField] private float moveSpeed;
     [Tooltip("The time it takes for player to rotate its Y-axis")] [SerializeField] private float turnSpeed;
@@ -75,8 +77,15 @@ public class PlayerController : MonoBehaviour
                 onDash.Invoke();
                 StartCoroutine("dash");
             }
-            #endregion
+            #endregion            
         }
+
+        #region SwitchMusic
+            if (changeBgmScript != null)
+            {
+                changeBgmScript.SwitchBGM();
+            }       
+        #endregion
 
     }
 
@@ -152,6 +161,7 @@ public class PlayerController : MonoBehaviour
         player.canDash = true;
     }
     #endregion
+
 
 
     
