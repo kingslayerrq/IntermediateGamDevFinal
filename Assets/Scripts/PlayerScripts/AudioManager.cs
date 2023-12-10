@@ -8,7 +8,6 @@ public class AudioManager : MonoBehaviour
 
     public AudioClip Jump;
     public AudioClip Dash;
-    //public AudioSource Land;
     public AudioClip Slash;
 
     void Start()
