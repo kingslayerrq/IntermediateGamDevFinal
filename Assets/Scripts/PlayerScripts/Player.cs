@@ -1,8 +1,9 @@
+using Cinemachine;
 using System;
 using System.Collections;
-using UnityEditor.Animations;
-using UnityEngine;
 
+using UnityEngine;
+using UnityEngine.Events;
 
 public class Player : MonoBehaviour, IDamageable, IResourceGauge
 {
@@ -41,6 +42,14 @@ public class Player : MonoBehaviour, IDamageable, IResourceGauge
     [HideInInspector] public Rigidbody2D playerRb;
     [HideInInspector] public Animator playerAnimator;
 
+    [Header("Player VC")]
+    public CinemachineVirtualCamera playerVC;
+    public float playerVCFOV;
+    public float playerVCFOVShrunk;
+    public float playerVCZoomDuration;
+
+
+    // TODO: Get this in Player combat?
     [SerializeField] private float invincibleTime;
 
     // Events to trigger
@@ -50,7 +59,9 @@ public class Player : MonoBehaviour, IDamageable, IResourceGauge
     public event Action<float> onEnergyRecoverUI;
     public static event Action<float> onPlayerHurt;
 
-
+    // SFX
+    private PlayerAudioManager playerAudioManager;
+    public UnityEvent onHurt;
 
     public enum playerState
     {
@@ -67,16 +78,28 @@ public class Player : MonoBehaviour, IDamageable, IResourceGauge
         playerCollider = GetComponent<CapsuleCollider2D>();
         playerRb = GetComponent<Rigidbody2D>();
         playerAnimator = GetComponent<Animator>();
+        playerAudioManager = GetComponent<PlayerAudioManager>();
     }
     private void Start()
     {
+        // Bool
         isFacingRight = true;
         isDashing = false;
         canMove = true;
         canAtk = true;
         canDash = true;
+
+        // Init Values
         curHealth = maxHealth;
         curGauge = maxGauge;
+
+        // Init Events
+        onHurt.AddListener(playerAudioManager.PlayHurtSFX);
+
+        // Get FOV of VC
+        playerVCFOV = playerVC.m_Lens.OrthographicSize;
+        playerVCFOVShrunk = playerVCFOV * 0.6f;
+
     }
     private void Update()
     {
@@ -120,7 +143,9 @@ public class Player : MonoBehaviour, IDamageable, IResourceGauge
         if (!isInvincible)
         {
             Debug.Log("took " + damage + " damage!");
+            // Invoke UI and SFX
             onHitUI?.Invoke(damage);
+            onHurt.Invoke();
             // Start invincible timer
             StartCoroutine(BecomeInvincible());
             // Knock Player back a little from the position of attacker
@@ -139,6 +164,7 @@ public class Player : MonoBehaviour, IDamageable, IResourceGauge
             else
             {
                 Debug.Log("Player died!");
+                Application.Quit();
                 Destroy(gameObject);
             }
         }
