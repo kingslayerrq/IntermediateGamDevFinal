@@ -1,11 +1,14 @@
+using System;
 using System.Collections;
 using DG.Tweening;
 using UnityEngine;
 
+[RequireComponent(typeof(Animator))]
 public class Boss : BaseEnemy
 {
 
     [SerializeField] private float jumpForce;
+
 
     [Header("Target")]
     public Player player;
@@ -16,8 +19,11 @@ public class Boss : BaseEnemy
 
     [Header("Attack Variables")]
     [SerializeField] private float attackRange;
+    [SerializeField] private float attackAnimDuration;
     [SerializeField] private float missAttackOffset;
     [SerializeField] private float attackCoolDown;
+    public Transform attackPoint;
+    public event Action<bool> onAttack;
 
     [Header("Snooze Variable")]
     [SerializeField] private float snoozeDuration;
@@ -33,11 +39,18 @@ public class Boss : BaseEnemy
     [SerializeField] private float enrageTransformDuration;
     [SerializeField] private float enrageSpeedMultiplier;
     [SerializeField] private int enrageDmgMultiplier;
+    [SerializeField] private float enrageDashForceMultiplier;
+    [SerializeField] private float enrageDashDistanceMultiplier;
 
+    private Animator bossAnimator;
+    private EncounterTrigger encounterTrigger;
+
+    public bool isAwake;
     public bool isInvincible;
     public bool isEnraged;
     public BossState curBossState;
 
+    private SpriteRenderer bossSR;
     public enum BossState
     {
         Spawn,
@@ -55,13 +68,19 @@ public class Boss : BaseEnemy
     protected override void Awake()
     {
         base.Awake();
+        bossAnimator = GetComponent<Animator>();
+        encounterTrigger = GetComponentInChildren<EncounterTrigger>();
+        bossSR = GetComponent<SpriteRenderer>();
+        encounterTrigger.onEncounterStart += startEncounter;
     }
     protected override void Start()
     {
         curHealth = maxHealth;
+        isMovingRight = false;
         isEnraged = false;
+        isAwake = false;
         curBossState = BossState.Init;
-        UpdateBossState(BossState.Spawn);
+        
     }
 
     protected override void Update()
@@ -70,15 +89,18 @@ public class Boss : BaseEnemy
         {
             if (isMovingRight)
             {
+                transform.localScale = new Vector2(-1, 1);
                 transform.Translate(Vector2.right * moveSpeed * Time.deltaTime);
             }
             else
             {
+                transform.localScale = Vector2.one;
                 transform.Translate(Vector2.left * moveSpeed * Time.deltaTime);
             }
         }
         if (curHealth < maxHealth / 2 && !isEnraged)
         {
+            Debug.Log("transform!!!");
             UpdateBossState(BossState.Transform);
         }
 
@@ -150,12 +172,28 @@ public class Boss : BaseEnemy
             isGrounded = false;
         }
     }
+    
+    
     // Spawn the boss -> ChasePlayer
     #region Spawn State
+    // Start the boss wake up anim
+    void startEncounter(bool b)
+    {
+        isAwake = true;
+        Debug.Log("boss triggered");
+        StartCoroutine(waitForCameraZoom());
+    }
+
+    private IEnumerator waitForCameraZoom()
+    {
+        yield return new WaitForSecondsRealtime(2f);
+        bossAnimator.SetTrigger("wakeUp");
+        UpdateBossState(BossState.Spawn);
+    }
     void HandleBossSpawn()
     {
-        // Initialize Boss
-        //Debug.Log("Spawn");
+
+        Debug.Log("Spawn");
         UpdateBossState(BossState.ChasePlayer);
     }
     #endregion
@@ -185,7 +223,7 @@ public class Boss : BaseEnemy
 
     private IEnumerator EndChase()
     {
-        if (distToPlayer <= attackRange)
+        if (distToPlayer <= attackRange + missAttackOffset)
         {
             UpdateBossState(BossState.Attack);
             yield return null;
@@ -196,7 +234,7 @@ public class Boss : BaseEnemy
             yield return new WaitForSecondsRealtime(minChaseDuration);
             
             // Try to dash and slash, when far away
-            if (distToPlayer >= (dashDistance + attackRange))
+            if (distToPlayer >= (dashDistance + attackRange + missAttackOffset))
             {
                 UpdateBossState(BossState.Dash);
                 yield return null;
@@ -204,7 +242,7 @@ public class Boss : BaseEnemy
             else
             {
                 // When not enraged, either start the coroutine again, or enter snooze
-                if(Random.Range(0, 11) > 0)
+                if(UnityEngine.Random.Range(0, 11) > 0)
                 {
                     StartCoroutine(EndChase());
                     yield return null;
@@ -226,6 +264,7 @@ public class Boss : BaseEnemy
     {
         if (isEnraged)
         {
+            
             StartCoroutine(Dash());
         }
         else
@@ -247,6 +286,7 @@ public class Boss : BaseEnemy
 
     private IEnumerator Dash()
     {
+        bossAnimator.SetTrigger("dash");
         var origG = enemyRb.gravityScale;
         enemyRb.gravityScale = 0;
         if (isMovingRight)
@@ -264,6 +304,7 @@ public class Boss : BaseEnemy
 
     private IEnumerator EnragedDash()
     {
+        bossAnimator.SetTrigger("dash");
         var origG = enemyRb.gravityScale;
         enemyRb.gravityScale = 0;
         if (isMovingRight)
@@ -277,6 +318,7 @@ public class Boss : BaseEnemy
         yield return new WaitForSeconds(dashDuration);
         player.playerRb.velocity = Vector2.zero;
         yield return new WaitForSecondsRealtime(enragedDashCoolDown);
+        bossAnimator.SetTrigger("dash");
         if (isMovingRight)
         {
             enemyRb.velocity = Vector2.right * dashForce;
@@ -301,8 +343,11 @@ public class Boss : BaseEnemy
     {
         //Debug.Log("Doing attack");
         // Play Regular attack anim?
+        onAttack?.Invoke(true);
+        enemyRb.constraints = RigidbodyConstraints2D.FreezeAll;
+        yield return new WaitForSeconds(attackAnimDuration);
+        enemyRb.constraints = RigidbodyConstraints2D.FreezeRotation;
         yield return null;
-        yield return new WaitForSecondsRealtime(attackCoolDown);
         if (distToPlayer > attackRange + missAttackOffset)
         {
             if (isEnraged)
@@ -323,6 +368,8 @@ public class Boss : BaseEnemy
             //Debug.Log("Ending atk coroutine");
         }
     }
+
+   
     #endregion
 
     #region Transform State
@@ -332,6 +379,9 @@ public class Boss : BaseEnemy
         isEnraged = true;
         moveSpeed *= enrageSpeedMultiplier;
         attackDamage *= enrageDmgMultiplier;
+        missAttackOffset *= 0.5f;
+        dashForce *= enrageDashForceMultiplier;
+        dashDistance *= enrageDashDistanceMultiplier;
         StartCoroutine(DoTransform());
 
     }
@@ -341,7 +391,8 @@ public class Boss : BaseEnemy
         isInvincible = true;
         enemyRb.constraints = RigidbodyConstraints2D.FreezeAll;
         Debug.Log("transforming");
-        yield return new WaitForSeconds(enrageTransformDuration);
+        bossSR.DOColor(Color.red, enrageTransformDuration);
+        yield return new WaitForSecondsRealtime(enrageTransformDuration);
         enemyRb.constraints = RigidbodyConstraints2D.FreezeRotation;
         Debug.Log("Done transforming");
         isInvincible = false;
@@ -356,7 +407,7 @@ public class Boss : BaseEnemy
         if(curBossState == BossState.ChasePlayer)
         {
             //Debug.Log("React to jump");
-            if (Random.Range(0, 3) > 0 && isGrounded)
+            if (UnityEngine.Random.Range(0, 3) > 0 && isGrounded)
             {
                 StartCoroutine(Jump());
             }
@@ -390,10 +441,15 @@ public class Boss : BaseEnemy
         }
     }
 
+    private void OnDestroy()
+    {
+        encounterTrigger.onEncounterStart -= startEncounter;
+    }
     private void OnDrawGizmos()
     {
         Gizmos.DrawWireSphere(transform.position, dashDistance);
-        Gizmos.DrawWireSphere(transform.position, attackRange);
+        Gizmos.DrawWireSphere(attackPoint.position, attackRange);
+        Gizmos.DrawWireSphere(attackPoint.position, attackRange + missAttackOffset);
     }
 
 }

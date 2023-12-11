@@ -29,6 +29,7 @@ public class PlayerController : MonoBehaviour
     private PlayerAudioManager playerAudioManager;
     public UnityEvent onJump = new UnityEvent();
     public UnityEvent onDash = new UnityEvent();
+    
   
 
 
@@ -160,11 +161,11 @@ public class PlayerController : MonoBehaviour
         player.playerRb.gravityScale = 0f;
         if (player.isFacingRight)
         {
-            player.playerRb.velocity = Vector2.right * dashForce;
+            player.playerRb.velocity = Vector2.right * dashForce * (1 / Time.timeScale);
         }
         else
         {
-            player.playerRb.velocity = Vector2.left * dashForce;
+            player.playerRb.velocity = Vector2.left * dashForce * (1 / Time.timeScale);
         }
         yield return new WaitForSecondsRealtime(dashDuration);
         player.playerRb.gravityScale = originG;

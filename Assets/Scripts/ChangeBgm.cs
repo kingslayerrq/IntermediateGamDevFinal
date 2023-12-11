@@ -34,4 +34,14 @@ public class ChangeBgm : MonoBehaviour
             hasChangedBgm = true;
         }
     }
+
+    public void Slow()
+    {
+        bgm.pitch = 0.5f;
+    }
+
+    public void Revert()
+    {
+        bgm.pitch = 1.0f;
+    }
 }

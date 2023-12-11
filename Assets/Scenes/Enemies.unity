@@ -2296,7 +2296,7 @@ MonoBehaviour:
   knockbackMultiplier: 0.5
   platformLayerMask:
     serializedVersion: 2
-    m_Bits: 0
+    m_Bits: 8
   checkGroundBuffer: 0
   isMovingRight: 0
   isUnstoppable: 0
@@ -3439,6 +3439,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   playerTimeSlowFactor: 0.05
   slowGaugeRecoverFactor: 0
+  changeBgmScript: {fileID: 652934399}
 --- !u!114 &984455473
 MonoBehaviour:
   m_ObjectHideFlags: 0

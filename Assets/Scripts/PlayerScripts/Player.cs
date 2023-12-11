@@ -87,7 +87,7 @@ public class Player : MonoBehaviour, IDamageable, IResourceGauge
     void checkGrounded()
     {
         checkGroundDist = playerCollider.size.y * 0.5f + checkGroundBuffer;
-        RaycastHit2D hit = Physics2D.CapsuleCast(transform.position, playerCollider.size, CapsuleDirection2D.Vertical, 90f, -Vector2.up, checkGroundDist, groundLayers);
+        RaycastHit2D hit = Physics2D.CapsuleCast(transform.position, new Vector2(playerCollider.size.x - 1, playerCollider.size.y), CapsuleDirection2D.Vertical, 90f, -Vector2.up, checkGroundDist, groundLayers);
         if (hit)
         {
             isGrounded = true;

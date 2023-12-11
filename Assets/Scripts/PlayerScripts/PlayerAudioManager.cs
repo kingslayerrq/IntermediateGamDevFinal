@@ -11,6 +11,7 @@ public class PlayerAudioManager : MonoBehaviour
     public AudioClip Dash;
     //public AudioSource Land;
     public AudioClip Slash;
+    public AudioClip SlashWall;
 
     void Start()
     {
@@ -32,6 +33,12 @@ public class PlayerAudioManager : MonoBehaviour
     public void PlaySlashSFX()
     {
         playerAudio.clip = Slash;
+        playerAudio.Play();
+    }
+
+    public void PlaySlashWallSFX()
+    {
+        playerAudio.clip = SlashWall;
         playerAudio.Play();
     }
 
