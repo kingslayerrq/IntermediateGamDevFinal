@@ -19,6 +19,6 @@ public class PlayerCameraBound : MonoBehaviour
         var pos = transform.position;
         pos.x = Mathf.Clamp(transform.position.x, minX, transform.position.x);
         transform.position = pos;
-        Debug.Log(transform.position);
+        //Debug.Log(transform.position);
     }
 }

@@ -8,6 +8,7 @@ public class Boss : BaseEnemy
 {
 
     [SerializeField] private float jumpForce;
+    [SerializeField] private float jumpYVelLimit;
 
 
     [Header("Target")]
@@ -22,6 +23,7 @@ public class Boss : BaseEnemy
     [SerializeField] private float attackAnimDuration;
     [SerializeField] private float missAttackOffset;
     [SerializeField] private float attackCoolDown;
+    [SerializeField] private LayerMask attackableLayers;
     public Transform attackPoint;
     public event Action<bool> onAttack;
 
@@ -317,7 +319,7 @@ public class Boss : BaseEnemy
         }
         yield return new WaitForSeconds(dashDuration);
         player.playerRb.velocity = Vector2.zero;
-        yield return new WaitForSecondsRealtime(enragedDashCoolDown);
+        yield return new WaitForSeconds(enragedDashCoolDown);
         bossAnimator.SetTrigger("dash");
         if (isMovingRight)
         {
@@ -337,6 +339,7 @@ public class Boss : BaseEnemy
     void HandleAttack()
     {
         //Debug.Log("attack state");
+
         StartCoroutine(DoAttack());
     }
     private IEnumerator DoAttack()
@@ -344,7 +347,23 @@ public class Boss : BaseEnemy
         //Debug.Log("Doing attack");
         // Play Regular attack anim?
         onAttack?.Invoke(true);
+        // Freeze position when attacking
         enemyRb.constraints = RigidbodyConstraints2D.FreezeAll;
+
+        Collider2D[] targetsHit = Physics2D.OverlapCircleAll(attackPoint.position, attackRange, attackableLayers);
+
+        Vector2 attackFrom = isMovingRight ? new Vector2(1, 0) : new Vector2(-1, 0);
+       
+        // Call TakeDamage on the enemy script
+        foreach (Collider2D target in targetsHit)
+        {
+            Debug.Log("hit player");
+            var player = target.GetComponent<Player>();
+            if (player)
+            {
+                player.takeDamage(attackDamage, attackFrom);
+            }
+        }
         yield return new WaitForSeconds(attackAnimDuration);
         enemyRb.constraints = RigidbodyConstraints2D.FreezeRotation;
         yield return null;
@@ -425,6 +444,8 @@ public class Boss : BaseEnemy
     {
         yield return new WaitForEndOfFrame();
         enemyRb.AddForce(Vector2.up * jumpForce, ForceMode2D.Impulse);
+        float clampedYVelocity = Mathf.Min(enemyRb.velocity.y, jumpYVelLimit);
+        enemyRb.velocity = new Vector2(enemyRb.velocity.x, clampedYVelocity);
     }
     #endregion
     protected override void OnCollisionEnter2D(Collision2D collision)

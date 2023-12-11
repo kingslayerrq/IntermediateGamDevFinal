@@ -10,6 +10,8 @@ public class PlayerCombat : MonoBehaviour
 {
     private Player player;
     private PlayerAudioManager playerAudioManager;
+    private HealAura healAura;
+
     [SerializeField] private int attackDamage;
     [SerializeField] private float slashCoolDown;
     [SerializeField] private float knockbackForceSelf;
@@ -20,6 +22,8 @@ public class PlayerCombat : MonoBehaviour
     [SerializeField] private float attackRange;
     [SerializeField] private float playerKnockbackDistance;
     [SerializeField] private float playerKnockbackDuration;
+    [SerializeField] private float pogoForce;
+    [SerializeField] private float pogoYVelLimit;
     #region Attack Points
     public Transform attackPointHor;
     public Transform attackPointTop;
@@ -34,23 +38,30 @@ public class PlayerCombat : MonoBehaviour
     public event Action<int> OnDownSlash;
 
     public UnityEvent onSlashPlatform = new UnityEvent();
+    public UnityEvent onSlashMiss = new UnityEvent();
+    public UnityEvent onHeal = new UnityEvent();
     
 
     // Used to calculate time holding down
     private float holdTime = 0;
-
+    private Coroutine zoomCoroutine;
     private void Awake()
     {
         player = GetComponent<Player>();
         playerAudioManager = GetComponent<PlayerAudioManager>();
+        healAura = GetComponentInChildren<HealAura>();
        
     }
     private void Start()
     {
         onSlashPlatform.AddListener(playerAudioManager.PlaySlashWallSFX);
+        onSlashMiss.AddListener(playerAudioManager.PlaySlashMissSFX);
+        onHeal.AddListener(playerAudioManager.PlayHealSFX);
+        onHeal.AddListener(healAura.LightUp);
     }
     private void Update()
     {
+        Debug.Log(player.playerRb.velocity.y);
         #region Attack
         // Attack (animation determines how often we can detect the input of attack?)
         if (player.canMove && player.canAtk)
@@ -68,7 +79,16 @@ public class PlayerCombat : MonoBehaviour
             if (Input.GetKey(player.healKey) && player.curGauge >= healResourceReq && player.curHealth < player.maxHealth)
             {
                 player.canMove = false;
+                player.playerAnimator.SetBool("isWalkingAnim", false);
                 // Zoom in ?
+                if (player.playerVC.enabled)
+                {
+                    if (zoomCoroutine != null)
+                    {
+                        StopCoroutine(zoomCoroutine);
+                    }
+                    zoomCoroutine = StartCoroutine(Zoom(player.playerVCFOVShrunk, player.playerVCZoomDuration));
+                }
                 Debug.Log("holding");
                 holdTime += Time.unscaledDeltaTime;
                 if (holdTime >= healKeyHold)
@@ -78,9 +98,14 @@ public class PlayerCombat : MonoBehaviour
             }
             else
             {
-                // Does the player become movable if they just recovered a health and the regen key was never let go?
+                // TODO: Refactor the condition so it doesnt trigger every frame!!!
                 player.canMove = true;
                 holdTime = 0;
+                if (zoomCoroutine != null)
+                {
+                    StopCoroutine(zoomCoroutine);
+                }
+                zoomCoroutine = StartCoroutine(Zoom(player.playerVCFOV, player.playerVCZoomDuration));
             }
         }
         // When key lifted reset the hold time and player is movable
@@ -88,6 +113,11 @@ public class PlayerCombat : MonoBehaviour
         {
             player.canMove = true;
             holdTime = 0;
+            if (zoomCoroutine != null)
+            {
+                StopCoroutine(zoomCoroutine);
+            }
+            zoomCoroutine = StartCoroutine(Zoom(player.playerVCFOV, player.playerVCZoomDuration));
         }
         #endregion
     }
@@ -147,26 +177,64 @@ public class PlayerCombat : MonoBehaviour
             {
                 onSlashPlatform.Invoke();
             }
-            int kbDirection = player.isFacingRight ? -1 : 1;
-            Vector2 kbFrom = new Vector2(kbDirection, 0);
+            int kbDirection;
+            Vector2 kbFrom;
+            kbDirection = player.isFacingRight ? -1 : 1;
+            if (attackDir == attackPointHor)
+            {
+                kbFrom = new Vector2(kbDirection, 0);
+            }
+            else if (attackDir == attackPointBot)
+            {
+                Debug.Log("bothit!!!");
+                kbFrom = new Vector2(kbDirection, pogoForce);
+            }
+            else
+            {
+                kbFrom = new Vector2(kbDirection, -1);
+            }
             player.playerRb.AddForce(kbFrom * knockbackForceSelf, ForceMode2D.Impulse);
+            // limit Y positive Vel
+            float clampedYVelocity = Mathf.Min(player.playerRb.velocity.y, pogoYVelLimit);
+            player.playerRb.velocity = new Vector2(player.playerRb.velocity.x, clampedYVelocity);
             //Debug.Log("self kb");
+        }
+        // When we miss
+        else
+        {
+            onSlashMiss.Invoke();
         }
 
     }
 
 
+    // Spend Resource -> Gain Heart -> Play Sound
     void heal(int amount)
     {
         holdTime = 0;
         if (player.curGauge >= healResourceReq)
         {
+            onHeal.Invoke();
             player.useResource(healResourceReq);
             player.gainHealth(amount);
         }
         
     }
 
+    private IEnumerator Zoom(float fov, float duration)
+    {
+        Debug.Log("in zoom");
+        float curFov = player.playerVC.m_Lens.OrthographicSize;
+        float step = fov - curFov;
+        float time = 0;
+        while (time < duration)
+        {
+            time += Time.unscaledDeltaTime;
+            player.playerVC.m_Lens.OrthographicSize += step * Time.unscaledDeltaTime;
+            yield return null;
+        }
+        player.playerVC.m_Lens.OrthographicSize = fov;
+    }
     private IEnumerator slashCD()
     {
         player.canAtk = false;
