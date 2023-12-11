@@ -1,4 +1,5 @@
 using DG.Tweening;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -26,6 +27,10 @@ public class PlayerCombat : MonoBehaviour
     public LayerMask attackableLayers;
     #endregion
 
+    public event Action<int> OnHorSlash;
+    public event Action<int> OnUpSlash;
+    public event Action<int> OnDownSlash;
+
     // Used to calculate time holding down
     private float holdTime = 0;
 
@@ -46,6 +51,8 @@ public class PlayerCombat : MonoBehaviour
             if (Input.GetKeyDown(player.atkKey))
             {
                 attack();
+                
+                
             }
         }
         #endregion
@@ -83,22 +90,29 @@ public class PlayerCombat : MonoBehaviour
     void attack()
     {
         StartCoroutine("slashCD");
-        Debug.Log("attacking");
+        //Debug.Log("attacking");
         // Get direction of attack
         int attackFromX = player.isFacingRight ? 1 : -1;
         // Knock enemy back horizontally
         Vector2 attackFrom = new Vector2(attackFromX, 0);
         if (Input.GetKey(player.upKey) || Input.GetKeyDown(player.upKey))
         {
+            Debug.Log("upslash");
+            OnUpSlash?.Invoke(1);
             attackDir = attackPointTop;
         }
         else if ((Input.GetKey(player.downKey) || Input.GetKeyDown(player.downKey)) && !player.isGrounded)
         {
+            Debug.Log("downslash");
+            OnDownSlash?.Invoke(-1);
             attackDir = attackPointBot;
         }
         else
         {
-            Debug.Log("default attack direction");
+            player.playerAnimator.SetTrigger("isHorSlash");
+            float dir = player.isFacingRight ? 1f : -1f;
+            OnHorSlash?.Invoke(1);
+            //Debug.Log("default attack direction");
             attackDir = attackPointHor;
         }
 
@@ -154,12 +168,9 @@ public class PlayerCombat : MonoBehaviour
     #region Debug
     private void OnDrawGizmosSelected()
     {
-
-        if (!attackDir)
-        {
-            return;
-        }
-        Gizmos.DrawWireSphere(attackDir.position, attackRange);
+        Gizmos.DrawWireSphere(attackPointBot.position, attackRange);
+        Gizmos.DrawWireSphere(attackPointTop.position, attackRange);
+        Gizmos.DrawWireSphere(attackPointHor.position, attackRange);
     }
     #endregion
 }
