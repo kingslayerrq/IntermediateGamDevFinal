@@ -4,10 +4,15 @@ using System.Collections.Generic;
 using UnityEngine;
 public class CameraController : MonoBehaviour
 {
+    public EncounterTrigger trigger;
     public CinemachineVirtualCamera cam1;
     public CinemachineVirtualCamera cam2;
 
 
+    private void Awake()
+    {
+        trigger.onEncounterStart += SwitchCam;
+    }
     // Start is called before the first frame update
     void Start()
     {
@@ -15,26 +20,14 @@ public class CameraController : MonoBehaviour
         cam2.enabled = false;
     }
 
-    // Update is called once per frame
-    void Update()
+    void SwitchCam(bool b)
     {
-    }
-
-    private void OnTriggerEnter2D(Collider2D collision)
-    {
-        if (collision.name != "MC")
-            return;
-        print("enter");
         cam2.enabled = true;
         cam1.enabled = false;
     }
-    private void OnTriggerExit2D(Collider2D collision)
-    {
-        if (collision.name != "MC")
-            return;
-        print("exit");
 
-        cam2.enabled = false;
-        cam1.enabled = true;
+    private void OnDestroy()
+    {
+        trigger.onEncounterStart -= SwitchCam;
     }
 }

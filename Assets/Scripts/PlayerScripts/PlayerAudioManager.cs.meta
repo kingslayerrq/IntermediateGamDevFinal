@@ -8,6 +8,7 @@ MonoImporter:
   - Jump: {fileID: 8300000, guid: d27b481287b3f93429d0d40e396bb68d, type: 3}
   - Dash: {fileID: 8300000, guid: 3566e71f910bba040a850c63e99cb5df, type: 3}
   - Slash: {fileID: 8300000, guid: 3084bbaf18b672b4b9869379b0ef5e60, type: 3}
+  - SlashWall: {fileID: 8300000, guid: 285e828e50ba84644be3dd983e21ac04, type: 3}
   executionOrder: 0
   icon: {instanceID: 0}
   userData: 
