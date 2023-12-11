@@ -13,6 +13,8 @@ public class PlayerController : MonoBehaviour
 {
     private Player player;
 
+    public ChangeBgm changeBgmScript;
+
     [Header("Movement Attributes")]
     [SerializeField] private float moveSpeed;
     [Tooltip("The time it takes for player to rotate its Y-axis")] [SerializeField] private float turnSpeed;
@@ -22,6 +24,7 @@ public class PlayerController : MonoBehaviour
     [SerializeField] private float dashCoolDown;
     [Tooltip("Time it takes to perform a dash")][SerializeField] private float dashDuration;
 
+    private bool isMoving = false;
 
     private PlayerAudioManager playerAudioManager;
     public UnityEvent onJump = new UnityEvent();
@@ -42,16 +45,19 @@ public class PlayerController : MonoBehaviour
 
         onDash.AddListener(playerAudioManager.PlayDashSFX);
 
+        
     }
    
 
     private void Update()
     {
+        
         if (player.canMove)
         {
             #region Movement
             // Move
             move();
+            
             #endregion
 
             #region Jump
@@ -59,12 +65,19 @@ public class PlayerController : MonoBehaviour
             if (Input.GetKeyDown(player.jmpKey) && player.isGrounded)
             {
                 onJump.Invoke();
+                player.playerAnimator.SetTrigger("isJumpAnim");
+                player.playerAnimator.SetBool("isJumping", true);
                 player.playerRb.velocity = new Vector2(player.playerRb.velocity.x, jmpForce);
             }
             // As soon as jmpkey released, set yvel => 0
             if (Input.GetKeyUp(player.jmpKey) && player.playerRb.velocity.y > 0)
             {
                 player.playerRb.velocity = new Vector2(player.playerRb.velocity.x, 0);
+                
+            }
+            if(Input.GetKeyUp(player.jmpKey))
+            {
+                player.playerAnimator.SetBool("isJumping", false);
             }
             #endregion
 
@@ -75,17 +88,27 @@ public class PlayerController : MonoBehaviour
                 onDash.Invoke();
                 StartCoroutine("dash");
             }
-            #endregion
+            #endregion            
         }
+
+        #region SwitchMusic
+            if (changeBgmScript != null)
+            {
+                changeBgmScript.SwitchBGM();
+            }       
+        #endregion
 
     }
 
     // Basic Movement
     void move()
     {
+        
         // Move Left
         if (Input.GetKeyDown(player.leftKey) || Input.GetKey(player.leftKey))
         {
+            isMoving = true;
+            player.playerAnimator.SetBool("isWalkingAnim", true);
             transform.position = new UnityEngine.Vector3(transform.position.x - moveSpeed * Time.deltaTime, transform.position.y, transform.position.z);
             // Turn if currently facing right
             if (player.isFacingRight) turn();
@@ -93,9 +116,17 @@ public class PlayerController : MonoBehaviour
         // Move Right
         else if (Input.GetKeyDown(player.rightKey) || Input.GetKey(player.rightKey))
         {
+            isMoving = true;
+            player.playerAnimator.SetBool("isWalkingAnim", true);
             transform.position = new UnityEngine.Vector3(transform.position.x + moveSpeed * Time.deltaTime, transform.position.y, transform.position.z);
             // Turn if currently facing left
             if (!player.isFacingRight) turn();
+        }
+
+        if(Input.GetKeyUp(player.leftKey) || Input.GetKeyUp(player.rightKey))
+        {
+            isMoving = false;
+            player.playerAnimator.SetBool("isWalkingAnim", false);
         }
 
     }
@@ -152,6 +183,7 @@ public class PlayerController : MonoBehaviour
         player.canDash = true;
     }
     #endregion
+
 
 
     

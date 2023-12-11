@@ -1,5 +1,6 @@
 using System;
 using System.Collections;
+using UnityEditor.Animations;
 using UnityEngine;
 
 
@@ -38,6 +39,7 @@ public class Player : MonoBehaviour, IDamageable, IResourceGauge
     [Tooltip("Buffer distance for Ground Check")][SerializeField] private float checkGroundBuffer;
     [HideInInspector] public CapsuleCollider2D playerCollider;
     [HideInInspector] public Rigidbody2D playerRb;
+    [HideInInspector] public Animator playerAnimator;
 
     [SerializeField] private float invincibleTime;
 
@@ -64,6 +66,7 @@ public class Player : MonoBehaviour, IDamageable, IResourceGauge
     {
         playerCollider = GetComponent<CapsuleCollider2D>();
         playerRb = GetComponent<Rigidbody2D>();
+        playerAnimator = GetComponent<Animator>();
     }
     private void Start()
     {
@@ -88,10 +91,12 @@ public class Player : MonoBehaviour, IDamageable, IResourceGauge
         if (hit)
         {
             isGrounded = true;
+            playerAnimator.SetBool("isGrounded", true);
         }
         else
         {
             isGrounded = false;
+            playerAnimator.SetBool("isGrounded", false);
         }
     }
 
