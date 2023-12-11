@@ -3,11 +3,13 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Events;
 
 [RequireComponent(typeof(Player))]
 public class PlayerCombat : MonoBehaviour
 {
     private Player player;
+    private PlayerAudioManager playerAudioManager;
     [SerializeField] private int attackDamage;
     [SerializeField] private float slashCoolDown;
     [SerializeField] private float knockbackForceSelf;
@@ -31,16 +33,21 @@ public class PlayerCombat : MonoBehaviour
     public event Action<int> OnUpSlash;
     public event Action<int> OnDownSlash;
 
+    public UnityEvent onSlashPlatform = new UnityEvent();
+    
+
     // Used to calculate time holding down
     private float holdTime = 0;
 
     private void Awake()
     {
         player = GetComponent<Player>();
+        playerAudioManager = GetComponent<PlayerAudioManager>();
        
     }
     private void Start()
     {
+        onSlashPlatform.AddListener(playerAudioManager.PlaySlashWallSFX);
     }
     private void Update()
     {
@@ -51,8 +58,6 @@ public class PlayerCombat : MonoBehaviour
             if (Input.GetKeyDown(player.atkKey))
             {
                 attack();
-                
-                
             }
         }
         #endregion
@@ -131,18 +136,21 @@ public class PlayerCombat : MonoBehaviour
             }
         }
 
-        //TODO: render slash
+  
 
 
 
         //TODO: player knockback should only occur when the nail hits anything
         if (targetsHit.Length > 0)
         {
+            if (targetsHit[0].transform.tag == "Ground" || targetsHit[0].transform.tag == "Wall")
+            {
+                onSlashPlatform.Invoke();
+            }
             int kbDirection = player.isFacingRight ? -1 : 1;
             Vector2 kbFrom = new Vector2(kbDirection, 0);
             player.playerRb.AddForce(kbFrom * knockbackForceSelf, ForceMode2D.Impulse);
-            Debug.Log("self kb");
-
+            //Debug.Log("self kb");
         }
 
     }

@@ -1,5 +1,6 @@
 using System.Collections;
 using UnityEngine;
+using UnityEngine.Events;
 
 [RequireComponent(typeof(Rigidbody2D))]
 public class BaseEnemy : MonoBehaviour, IDamageable
@@ -26,6 +27,8 @@ public class BaseEnemy : MonoBehaviour, IDamageable
     public bool isUnstoppable;
     public bool isGrounded;
 
+    public PlayerAudioManager playerAudioManager;
+    public UnityEvent onSlashEnemy = new UnityEvent();
     ///<summary>
     ///Get collider and rigidbody
     ///</summary>
@@ -33,6 +36,7 @@ public class BaseEnemy : MonoBehaviour, IDamageable
     {
         enemyCollider = GetComponent<CapsuleCollider2D>();
         enemyRb = GetComponent<Rigidbody2D>();
+        onSlashEnemy.AddListener(playerAudioManager.PlaySlashSFX);
     }
 
     ///<summary>
@@ -41,6 +45,7 @@ public class BaseEnemy : MonoBehaviour, IDamageable
     ///</summary>
     protected virtual void Start()
     {
+        
         isMovingRight = Random.Range(0, 1) == 1 ? true : false;
         curHealth = maxHealth;
     }
@@ -92,6 +97,7 @@ public class BaseEnemy : MonoBehaviour, IDamageable
     #region Idamageable Methods
     public virtual void takeDamage(int damage, Vector2? from)
     {
+        onSlashEnemy.Invoke();
         // Knockback enemy 
         if (!isUnstoppable)
         {

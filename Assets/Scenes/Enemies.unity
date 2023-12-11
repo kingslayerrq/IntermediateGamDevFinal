@@ -2296,7 +2296,7 @@ MonoBehaviour:
   knockbackMultiplier: 0.5
   platformLayerMask:
     serializedVersion: 2
-    m_Bits: 0
+    m_Bits: 8
   checkGroundBuffer: 0
   isMovingRight: 0
   isUnstoppable: 0
