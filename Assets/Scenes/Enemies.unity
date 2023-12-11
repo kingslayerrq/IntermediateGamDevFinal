@@ -3121,6 +3121,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   playerTimeSlowFactor: 0.05
   slowGaugeRecoverFactor: 0
+  changeBgmScript: {fileID: 652934399}
 --- !u!114 &984455473
 MonoBehaviour:
   m_ObjectHideFlags: 0
