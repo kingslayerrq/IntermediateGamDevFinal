@@ -1,6 +1,7 @@
 using Cinemachine;
 using System;
 using System.Collections;
+using UnityEngine.SceneManagement;
 
 using UnityEngine;
 using UnityEngine.Events;
@@ -164,8 +165,9 @@ public class Player : MonoBehaviour, IDamageable, IResourceGauge
             else
             {
                 Debug.Log("Player died!");
-                Application.Quit();
-                Destroy(gameObject);
+                //Application.LoadLevel(Application.loadedLevel);
+                SceneManager.LoadScene(SceneManager.GetActiveScene().name);
+                //Destroy(gameObject);
             }
         }
         else
