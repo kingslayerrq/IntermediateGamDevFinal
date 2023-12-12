@@ -12,6 +12,9 @@ public class PlayerAudioManager : MonoBehaviour
     //public AudioSource Land;
     public AudioClip Slash;
     public AudioClip SlashWall;
+    public AudioClip SlashMiss;
+    public AudioClip Heal;
+    public AudioClip Hurt;
 
     void Start()
     {
@@ -39,6 +42,23 @@ public class PlayerAudioManager : MonoBehaviour
     public void PlaySlashWallSFX()
     {
         playerAudio.clip = SlashWall;
+        playerAudio.Play();
+    }
+
+    public void PlaySlashMissSFX()
+    {
+        playerAudio.clip = SlashMiss;
+        playerAudio.Play();
+    }
+
+    public void PlayHealSFX()
+    {
+        playerAudio.clip = Heal;
+        playerAudio.Play();
+    }
+    public void PlayHurtSFX()
+    {
+        playerAudio.clip = Hurt;
         playerAudio.Play();
     }
 

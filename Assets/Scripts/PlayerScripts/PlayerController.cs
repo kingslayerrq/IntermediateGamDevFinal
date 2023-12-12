@@ -95,7 +95,7 @@ public class PlayerController : MonoBehaviour
         #region SwitchMusic
             if (changeBgmScript != null)
             {
-                changeBgmScript.SwitchBGM();
+                changeBgmScript.SwitchBGM(true);
             }       
         #endregion
 
@@ -124,7 +124,7 @@ public class PlayerController : MonoBehaviour
             if (!player.isFacingRight) turn();
         }
 
-        if(Input.GetKeyUp(player.leftKey) || Input.GetKeyUp(player.rightKey))
+        if(Input.GetKeyUp(player.leftKey) || Input.GetKeyUp(player.rightKey) || !player.canMove)
         {
             isMoving = false;
             player.playerAnimator.SetBool("isWalkingAnim", false);
