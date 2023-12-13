@@ -11,6 +11,9 @@ public class PlayerTimeSlow : MonoBehaviour
 
     [SerializeField] private float slowGaugeRecoverFactor;
 
+    private float origGravScale;
+    
+
     public ChangeBgm changeBgmScript;
 
     private void Awake()
@@ -22,8 +25,8 @@ public class PlayerTimeSlow : MonoBehaviour
     {
         player = GetComponent<Player>();
         playerTimeSlow.slowDownFactor = playerTimeSlowFactor;
-        
 
+        origGravScale = player.playerRb.gravityScale;
     }
 
     private void Update()
@@ -43,7 +46,7 @@ public class PlayerTimeSlow : MonoBehaviour
         #region TimeSlow
         if (Input.GetKeyDown(player.timeSlowKey) && Time.timeScale == 1f)
         {
-            if (player.curGauge >= playerTimeSlow.minSlowDownDuration)
+            if (player.curGauge > playerTimeSlow.minSlowDownDuration)
             {
                 playerTimeSlow.slowDownDuration = player.curGauge;
                 Debug.Log("slowing down " + player.curGauge);
@@ -54,6 +57,7 @@ public class PlayerTimeSlow : MonoBehaviour
         // When we are slowing down time, decrease the gauge
         if (Time.timeScale < 1f && player.curGauge > 0 && Time.timeScale > 0f)
         {
+            //player.playerRb.gravityScale = origGravScale * (1/Time.timeScale);
             if (changeBgmScript != null)
             {
                 changeBgmScript.Slow();
@@ -62,6 +66,7 @@ public class PlayerTimeSlow : MonoBehaviour
             player.useResource(Time.unscaledDeltaTime);
             
         }
+        
         #endregion
     }
 }

@@ -94,6 +94,18 @@ public class BaseEnemy : MonoBehaviour, IDamageable
             p.takeDamage(attackDamage, attackFrom);
         }
     }
+    protected virtual void OnCollisionStay2D(Collision2D collision)
+    {
+        Debug.Log("continue attacking");
+        // Damage Player, if we stay contacting player
+        if (collision.collider.CompareTag("Player"))
+        {
+            var p = collision.gameObject.GetComponent<Player>();
+            int attackFromX = isMovingRight ? 1 : -1;
+            Vector2 attackFrom = new Vector2(attackFromX, 1);
+            p.takeDamage(attackDamage, attackFrom);
+        }
+    }
     #region Idamageable Methods
     public virtual void takeDamage(int damage, Vector2? from)
     {
