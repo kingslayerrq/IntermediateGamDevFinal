@@ -1399,7 +1399,7 @@ Transform:
   m_GameObject: {fileID: 608854707}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -10.71, y: 0.504, z: -10}
+  m_LocalPosition: {x: 33.36, y: -3.6160002, z: -10}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -1897,7 +1897,7 @@ Transform:
   m_GameObject: {fileID: 739821716}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -10.71, y: 0.504, z: -10}
+  m_LocalPosition: {x: 33.36, y: -3.6160002, z: -10}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -2174,9 +2174,7 @@ MonoBehaviour:
   dashKey: 99
   timeSlowKey: 118
   healKey: 97
-  groundLayers:
-    serializedVersion: 2
-    m_Bits: 8
+  groundTag: Ground
   checkGroundBuffer: 0.001
   playerCollider: {fileID: 0}
   playerRb: {fileID: 0}
@@ -2198,7 +2196,7 @@ Transform:
   m_GameObject: {fileID: 810529512}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -11.71, y: -0.84, z: 0}
+  m_LocalPosition: {x: 32.36, y: -4.96, z: 0}
   m_LocalScale: {x: 0.8, y: 0.8, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
