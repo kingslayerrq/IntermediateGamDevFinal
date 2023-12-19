@@ -56,7 +56,26 @@ public class FlyingEnemy : BaseEnemy // Inherit from BaseEnemy
                 HandleRetreatState();
                 break;
         }
+
+        LayerMask platformLayerMask = LayerMask.GetMask("Platform");
+        RaycastHit2D hit = Physics2D.Raycast(transform.position, transform.right, moveSpeed * Time.deltaTime, platformLayerMask);
+        if (hit.collider != null)
+        {
+            Debug.Log("Raycast hit a platform.");
+            HandleCollisionWithPlatform();
+        }
+
     }
+
+
+    void HandleCollisionWithPlatform()
+    {
+        // Handle the collision with the platform
+        
+        isAttackInProgress = false;
+        currentState = State.Retreat;
+    }
+
 
     void HandleIdleState()
     {

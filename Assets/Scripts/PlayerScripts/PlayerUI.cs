@@ -35,7 +35,6 @@ public class PlayerUI : MonoBehaviour
     {
         heartList = new List<GameObject>();
         // Initialize Hearts
-        Debug.Log(player.maxHealth);
         for(int i = 0; i < player.maxHealth; i++)
         {
             heartList.Add(Instantiate(heartPrefab, heartLayoutGroup));
@@ -62,7 +61,6 @@ public class PlayerUI : MonoBehaviour
     // Remove X heart from List's End
     void removeHeart(int num)
     {
-        Debug.Log("removing hearts");
         for (int i = 0; i < num; i++)
         {
 
