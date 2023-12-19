@@ -61,7 +61,6 @@ public class PlayerCombat : MonoBehaviour
     }
     private void Update()
     {
-        Debug.Log(player.playerRb.velocity.y);
         #region Attack
         // Attack (animation determines how often we can detect the input of attack?)
         if (player.canMove && player.canAtk)
@@ -157,7 +156,6 @@ public class PlayerCombat : MonoBehaviour
         // Call TakeDamage on the enemy script
         foreach (Collider2D target in targetsHit)
         {
-            Debug.Log("hit enemy");
             var enemy = target.GetComponent<BaseEnemy>();
             if (enemy)
             {
@@ -223,7 +221,6 @@ public class PlayerCombat : MonoBehaviour
 
     private IEnumerator Zoom(float fov, float duration)
     {
-        Debug.Log("in zoom");
         float curFov = player.playerVC.m_Lens.OrthographicSize;
         float step = fov - curFov;
         float time = 0;

@@ -96,7 +96,6 @@ public class BaseEnemy : MonoBehaviour, IDamageable
     }
     protected virtual void OnCollisionStay2D(Collision2D collision)
     {
-        Debug.Log("continue attacking");
         // Damage Player, if we stay contacting player
         if (collision.collider.CompareTag("Player"))
         {

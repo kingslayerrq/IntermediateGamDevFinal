@@ -143,7 +143,6 @@ public class Player : MonoBehaviour, IDamageable, IResourceGauge
     {
         if (!isInvincible)
         {
-            Debug.Log("took " + damage + " damage!");
             // Invoke UI and SFX
             onHitUI?.Invoke(damage);
             onHurt.Invoke();
@@ -164,7 +163,6 @@ public class Player : MonoBehaviour, IDamageable, IResourceGauge
             }
             else
             {
-                Debug.Log("Player died!");
                 //Application.LoadLevel(Application.loadedLevel);
                 SceneManager.LoadScene(SceneManager.GetActiveScene().name);
                 //Destroy(gameObject);
@@ -172,7 +170,7 @@ public class Player : MonoBehaviour, IDamageable, IResourceGauge
         }
         else
         {
-            Debug.Log("Im Invincibel!!!");
+
         }
     }
 
@@ -199,7 +197,6 @@ public class Player : MonoBehaviour, IDamageable, IResourceGauge
         curGauge -= amount;
         // Convert amount to percentage
         float amountPerc = amount / maxGauge;
-        Debug.Log("perc: " + amountPerc);
         onEnergySpentUI?.Invoke(amountPerc);
     }
     #endregion
