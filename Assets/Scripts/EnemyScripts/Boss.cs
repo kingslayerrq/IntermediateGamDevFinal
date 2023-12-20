@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using DG.Tweening;
 using UnityEngine;
+using TMPro;
 
 [RequireComponent(typeof(Animator))]
 public class Boss : BaseEnemy
@@ -9,6 +10,8 @@ public class Boss : BaseEnemy
 
     [SerializeField] private float jumpForce;
     [SerializeField] private float jumpYVelLimit;
+
+
 
 
     [Header("Target")]
@@ -51,6 +54,8 @@ public class Boss : BaseEnemy
     public bool isInvincible;
     public bool isEnraged;
     public BossState curBossState;
+
+    public TextMeshProUGUI deathText;
 
     private SpriteRenderer bossSR;
     public enum BossState
@@ -459,6 +464,13 @@ public class Boss : BaseEnemy
         if (!isInvincible)
         {
             base.takeDamage(damage, from);
+            Debug.Log(curHealth);
+
+            if (curHealth <= 1)
+            {
+                Debug.Log("End2");
+                deathText.gameObject.SetActive(true); 
+            }
         }
     }
 

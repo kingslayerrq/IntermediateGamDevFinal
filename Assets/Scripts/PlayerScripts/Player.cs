@@ -2,6 +2,7 @@ using Cinemachine;
 using System;
 using System.Collections;
 using UnityEngine.SceneManagement;
+using TMPro;
 
 using UnityEngine;
 using UnityEngine.Events;
@@ -23,6 +24,8 @@ public class Player : MonoBehaviour, IDamageable, IResourceGauge
     public bool canMove;
     public bool canDash;
     public bool canAtk;
+
+    public TextMeshProUGUI endText;
 
     [Header("Player's KeyBinds")]
     public KeyCode upKey = KeyCode.UpArrow;
@@ -114,7 +117,6 @@ public class Player : MonoBehaviour, IDamageable, IResourceGauge
         RaycastHit2D hit = Physics2D.CapsuleCast(transform.position, new Vector2(playerCollider.size.x - 1, playerCollider.size.y), CapsuleDirection2D.Vertical, 0f, -Vector2.up, checkGroundDist, groundLayers);
         if (hit && hit.collider.CompareTag("Ground"))
         {
-            Debug.Log($"Hit collider tag: {hit.collider.tag}");
             isGrounded = true;
             playerAnimator.SetBool("isGrounded", true);
         }
@@ -166,7 +168,6 @@ public class Player : MonoBehaviour, IDamageable, IResourceGauge
             {
                 //Application.LoadLevel(Application.loadedLevel);
                 SceneManager.LoadScene(SceneManager.GetActiveScene().name);
-                //Destroy(gameObject);
             }
         }
         else
