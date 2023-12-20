@@ -57,7 +57,10 @@ public class PlayerController : MonoBehaviour
         {
             #region Movement
             // Move
-            move();
+            if (!player.isDashing)
+            {
+                move();
+            }
             
             #endregion
 
@@ -76,7 +79,7 @@ public class PlayerController : MonoBehaviour
                 player.playerRb.velocity = new Vector2(player.playerRb.velocity.x, 0);
                 
             }
-            if(Input.GetKeyUp(player.jmpKey))
+            if(Input.GetKeyUp(player.jmpKey) || player.isGrounded)
             {
                 player.playerAnimator.SetBool("isJumping", false);
             }
@@ -110,7 +113,7 @@ public class PlayerController : MonoBehaviour
         {
             isMoving = true;
             player.playerAnimator.SetBool("isWalkingAnim", true);
-            transform.position = new UnityEngine.Vector3(transform.position.x - moveSpeed * Time.deltaTime, transform.position.y, transform.position.z);
+            transform.position = new UnityEngine.Vector3(transform.position.x - moveSpeed * Time.unscaledDeltaTime, transform.position.y, transform.position.z);
             // Turn if currently facing right
             if (player.isFacingRight) turn();
         }
@@ -119,7 +122,7 @@ public class PlayerController : MonoBehaviour
         {
             isMoving = true;
             player.playerAnimator.SetBool("isWalkingAnim", true);
-            transform.position = new UnityEngine.Vector3(transform.position.x + moveSpeed * Time.deltaTime, transform.position.y, transform.position.z);
+            transform.position = new UnityEngine.Vector3(transform.position.x + moveSpeed * Time.unscaledDeltaTime, transform.position.y, transform.position.z);
             // Turn if currently facing left
             if (!player.isFacingRight) turn();
         }

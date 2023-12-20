@@ -36,7 +36,6 @@ public class GroundEnemy : BaseEnemy
 
         if (groundInfo.collider == false)
         {
-            Debug.Log("edge");
             this.Flip();
         }
     }

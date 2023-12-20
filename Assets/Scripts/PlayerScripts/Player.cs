@@ -1,6 +1,8 @@
 using Cinemachine;
 using System;
 using System.Collections;
+using UnityEngine.SceneManagement;
+using TMPro;
 
 using UnityEngine;
 using UnityEngine.Events;
@@ -22,6 +24,8 @@ public class Player : MonoBehaviour, IDamageable, IResourceGauge
     public bool canMove;
     public bool canDash;
     public bool canAtk;
+
+    public TextMeshProUGUI endText;
 
     [Header("Player's KeyBinds")]
     public KeyCode upKey = KeyCode.UpArrow;
@@ -109,9 +113,9 @@ public class Player : MonoBehaviour, IDamageable, IResourceGauge
     #region Ground Check
     void checkGrounded()
     {
-        checkGroundDist = playerCollider.size.y * 0.5f + checkGroundBuffer;
-        RaycastHit2D hit = Physics2D.CapsuleCast(transform.position, new Vector2(playerCollider.size.x - 1, playerCollider.size.y), CapsuleDirection2D.Vertical, 90f, -Vector2.up, checkGroundDist, groundLayers);
-        if (hit)
+        checkGroundDist = playerCollider.size.y * 0.1f + checkGroundBuffer;
+        RaycastHit2D hit = Physics2D.CapsuleCast(transform.position, new Vector2(playerCollider.size.x - 1, playerCollider.size.y), CapsuleDirection2D.Vertical, 0f, -Vector2.up, checkGroundDist, groundLayers);
+        if (hit && hit.collider.CompareTag("Ground"))
         {
             isGrounded = true;
             playerAnimator.SetBool("isGrounded", true);
@@ -142,7 +146,6 @@ public class Player : MonoBehaviour, IDamageable, IResourceGauge
     {
         if (!isInvincible)
         {
-            Debug.Log("took " + damage + " damage!");
             // Invoke UI and SFX
             onHitUI?.Invoke(damage);
             onHurt.Invoke();
@@ -163,14 +166,13 @@ public class Player : MonoBehaviour, IDamageable, IResourceGauge
             }
             else
             {
-                Debug.Log("Player died!");
-                Application.Quit();
-                Destroy(gameObject);
+                //Application.LoadLevel(Application.loadedLevel);
+                SceneManager.LoadScene(SceneManager.GetActiveScene().name);
             }
         }
         else
         {
-            Debug.Log("Im Invincibel!!!");
+
         }
     }
 
@@ -197,7 +199,6 @@ public class Player : MonoBehaviour, IDamageable, IResourceGauge
         curGauge -= amount;
         // Convert amount to percentage
         float amountPerc = amount / maxGauge;
-        Debug.Log("perc: " + amountPerc);
         onEnergySpentUI?.Invoke(amountPerc);
     }
     #endregion
