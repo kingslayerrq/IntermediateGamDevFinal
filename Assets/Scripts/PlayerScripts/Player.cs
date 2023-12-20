@@ -167,7 +167,6 @@ public class Player : MonoBehaviour, IDamageable, IResourceGauge
             else
             {
                 //Application.LoadLevel(Application.loadedLevel);
-                Destroy(playerAudioManager);
                 SceneManager.LoadScene(SceneManager.GetActiveScene().name);
             }
         }
